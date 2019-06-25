@@ -77,6 +77,26 @@ public class Room {
         return gameState;
     }
 
+    public Integer getPlayerCount() {
+        return playerCount;
+    }
+
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    public Integer getMaxPlayerCount() {
+        return maxPlayerCount;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public SocketGame getGame() {
+        return game;
+    }
+
     @Override
     public String toString() {
         return "Room{" +

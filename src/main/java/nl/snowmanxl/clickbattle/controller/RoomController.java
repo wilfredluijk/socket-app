@@ -46,6 +46,12 @@ public class RoomController {
         return new RestResponse("Player updated", "Confirm");
     }
 
+    @GetMapping(path = "/{id}/getgametype")
+    public RestResponse getGameType(@PathVariable("id") Integer id) {
+        ;
+        return new RestResponse(String.valueOf(roomManager.getGameTypeOf(id)), "GameType");
+    }
+
     @RequestMapping(path = "/{id}/start")
     public RestResponse startGame(@PathVariable("id") Integer id) {
         roomManager.startGame(id);

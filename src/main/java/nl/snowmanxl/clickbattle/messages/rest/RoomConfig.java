@@ -7,15 +7,13 @@ import java.util.List;
 public class RoomConfig {
     private Integer maxPlayerCount;
     private GameType gameType;
-    private GameState gameState;
 
     public RoomConfig() {
     }
 
-    public RoomConfig(Integer maxPlayerCount, GameType gameType, GameState gameState) {
+    public RoomConfig(Integer maxPlayerCount, GameType gameType) {
         this.maxPlayerCount = maxPlayerCount;
         this.gameType = gameType;
-        this.gameState = gameState;
     }
 
     public Integer getMaxPlayerCount() {
@@ -34,11 +32,4 @@ public class RoomConfig {
         this.gameType = gameType;
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
 }

@@ -23,4 +23,11 @@ public class Score {
         return score.values().stream()
                 .anyMatch(score -> score >= scoreLimit);
     }
+
+    @Override
+    public String toString() {
+        return "Score{" +
+                "score=" + score +
+                '}';
+    }
 }

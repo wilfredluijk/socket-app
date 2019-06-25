@@ -17,4 +17,11 @@ public class SocketMessage<T> {
     public void setPayload(T payload) {
         this.payload = payload;
     }
+
+    @Override
+    public String toString() {
+        return "SocketMessage{" +
+                "payload=" + payload +
+                '}';
+    }
 }
