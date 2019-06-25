@@ -26,7 +26,7 @@ public class ClickRace implements SocketGame {
 
     @Override
     public Integer getScoreLimit() {
-       return SCORE_LIMIT;
+        return SCORE_LIMIT;
     }
 
     @Override
@@ -64,8 +64,8 @@ public class ClickRace implements SocketGame {
 
     @Override
     public void scoreFor(Integer team, Integer points) {
-        if(!score.limitIsReached(SCORE_LIMIT)) {
-            score.scoreFor(team, points);    
+        if (!score.limitIsReached(SCORE_LIMIT)) {
+            score.scoreFor(team, points);
         } else {
             gameState = GameState.FINISHED;
             emitStateChange();
@@ -76,10 +76,18 @@ public class ClickRace implements SocketGame {
     public Map<Integer, Integer> getScore() {
         return score.getScore();
     }
-    
+
     private void emitStateChange() {
-        if(gameStateConsumer != null) {
+        if (gameStateConsumer != null) {
             gameStateConsumer.accept(gameState);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ClickRace{" +
+                "gameState=" + gameState +
+                ", score=" + score +
+                '}';
     }
 }

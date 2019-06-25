@@ -28,4 +28,13 @@ public class Player {
     public void setTeam(Integer team) {
         this.team = team;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", team=" + team +
+                '}';
+    }
 }
