@@ -47,7 +47,7 @@ public class Room {
     }
 
     public Map<Integer, Integer> scoreForPlayer(Integer playerId, Integer points) {
-        if(gameIsStarted()) {
+        if (gameIsStarted()) {
             players.stream()
                     .filter(player -> player.getId() == playerId)
                     .findAny()
@@ -109,7 +109,6 @@ public class Room {
                 ", game=" + game +
                 '}';
     }
-
 
 
 }

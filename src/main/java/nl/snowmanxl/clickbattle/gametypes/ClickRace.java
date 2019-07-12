@@ -64,7 +64,7 @@ public class ClickRace implements SocketGame {
 
     @Override
     public void scoreFor(Integer team, Integer points) {
-        if (!score.limitIsReached(SCORE_LIMIT)) {
+        if (!score.limitIsReached(SCORE_LIMIT) && gameState == GameState.RUNNING) {
             score.scoreFor(team, points);
         } else {
             gameState = GameState.FINISHED;

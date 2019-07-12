@@ -20,22 +20,22 @@ public class RoomManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
 
     private final Map<Integer, Room> rooms = new HashMap<>();
-    private final List<Consumer<Room>> roomChangelisteners = new ArrayList<>();
+    private final List<Consumer<Room>> roomChangeListeners = new ArrayList<>();
 
     public void addRoom(Integer id, RoomConfig config) {
         var room = new Room(id, config.getGameType(), config.getMaxPlayerCount());
         rooms.put(id, room);
-        LOGGER.info("Room added {}", room);
+        LOGGER.debug("Room added {}", room);
         broadCastChange(room);
     }
 
     private void broadCastChange(Room room) {
-        LOGGER.info("Broadcast room: {}", room);
-        roomChangelisteners.forEach(listener -> listener.accept(room));
+        LOGGER.debug("Broadcast room: {}", room);
+        roomChangeListeners.forEach(listener -> listener.accept(room));
     }
 
     public void addRoomNotificationListener(Consumer<Room> listener) {
-        this.roomChangelisteners.add(listener);
+        this.roomChangeListeners.add(listener);
     }
 
     public Optional<Room> getRoom(Integer id) {
@@ -64,17 +64,13 @@ public class RoomManager {
     }
 
     public SocketMessage<ScoreBroadcast> submitScore(Integer id, ScoreSubmit scoreSubmit) {
-        var optional = getRoom(id);
-        if (optional.isPresent()) {
-            var room = optional.get();
+        return getRoom(id).map(room -> {
             var scores = room.scoreForPlayer(scoreSubmit.getPlayerId(), scoreSubmit.getPoints());
             var state = room.getGameState();
-            var payload = new ScoreBroadcast(scores, state);
             var socketMessage = new SocketMessage<ScoreBroadcast>();
-            socketMessage.setPayload(payload);
+            socketMessage.setPayload(new ScoreBroadcast(scores, state));
             return socketMessage;
-        }
-        return null;
+        }).orElse(null);
     }
 
     private void executeRoomAction(Integer id, Consumer<Room> action) {

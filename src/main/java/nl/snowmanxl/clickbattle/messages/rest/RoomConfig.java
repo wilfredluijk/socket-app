@@ -1,8 +1,6 @@
 package nl.snowmanxl.clickbattle.messages.rest;
 
-import nl.snowmanxl.clickbattle.model.*;
-
-import java.util.List;
+import nl.snowmanxl.clickbattle.model.GameType;
 
 public class RoomConfig {
     private Integer maxPlayerCount;
