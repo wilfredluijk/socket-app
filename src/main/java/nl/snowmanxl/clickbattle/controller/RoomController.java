@@ -9,13 +9,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping(path = "/room")
 public class RoomController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class);
+    private static final List<Integer> UNIQUE_IDs;
+
+    static {
+        var collect = IntStream.rangeClosed(10000, 99999)
+                .boxed()
+                .collect(Collectors.toList());
+        Collections.shuffle(collect);
+        UNIQUE_IDs = new CopyOnWriteArrayList<>(collect);
+    }
 
     private final RoomManager roomManager;
 
@@ -26,9 +38,8 @@ public class RoomController {
 
     @PostMapping(path = "/new")
     public RestResponse createNewRoom(@RequestBody RoomConfig config) {
-        LOGGER.info("create new room");
-        ThreadLocalRandom generator = ThreadLocalRandom.current();
-        var random = generator.nextInt(10000, 99999);
+        var random = getUniqueRandom(); //TODO: Generate unique number per session
+        LOGGER.trace("create new room with id {}", random);
         roomManager.addRoom(random, config);
         return new RestResponse(String.valueOf(random), "RoomID");
     }
@@ -67,6 +78,7 @@ public class RoomController {
     @RequestMapping(path = "/{id}/delete")
     public RestResponse deleteGame(@PathVariable("id") Integer id) {
         roomManager.deleteRoom(id);
+        restoreRoomId(id);
         return new RestResponse("Game deleted", "Confirm");
     }
 
@@ -76,4 +88,17 @@ public class RoomController {
         return new RestResponse("Game Stopped", "Confirm");
     }
 
+    private synchronized int getUniqueRandom() {
+        if (UNIQUE_IDs.isEmpty()) {
+            throw new IllegalStateException("No more unique room numbers available!");
+        }
+        return UNIQUE_IDs.remove(0);
+    }
+
+    private synchronized void restoreRoomId(int roomId) {
+        if (!UNIQUE_IDs.contains(roomId)) {
+            UNIQUE_IDs.add(roomId);
+            Collections.shuffle(UNIQUE_IDs);
+        }
+    }
 }
