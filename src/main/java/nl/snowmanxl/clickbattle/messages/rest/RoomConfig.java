@@ -2,6 +2,8 @@ package nl.snowmanxl.clickbattle.messages.rest;
 
 import nl.snowmanxl.clickbattle.model.GameType;
 
+import java.util.Objects;
+
 public class RoomConfig {
     private Integer maxPlayerCount;
     private GameType gameType;
@@ -30,4 +32,17 @@ public class RoomConfig {
         this.gameType = gameType;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomConfig that = (RoomConfig) o;
+        return Objects.equals(maxPlayerCount, that.maxPlayerCount) &&
+                gameType == that.gameType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(maxPlayerCount, gameType);
+    }
 }
