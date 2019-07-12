@@ -41,7 +41,6 @@ public class RoomSocket {
     private void consumeRoomUpdate(Room room) {
         var message = new SocketMessage<>(room);
 
-
         //TODO: Make more elegant
         try {
             String payload = MAPPER.writeValueAsString(message);
