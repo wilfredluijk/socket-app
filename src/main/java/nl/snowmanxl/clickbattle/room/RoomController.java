@@ -26,9 +26,7 @@ public class RoomController {
 
     @PostMapping(path = "/new")
     public RestResponse createNewRoom(@RequestBody RoomConfig config) {
-        int newRoomId = roomIdService.getNewRoomId();
-        roomManager.addRoom(newRoomId, config);
-        return new RestResponse(String.valueOf(newRoomId), "RoomID");
+        return new RestResponse(String.valueOf(roomManager.addRoom(config)), "RoomID");
     }
 
     @RequestMapping(path = "/{id}/join")
@@ -65,7 +63,6 @@ public class RoomController {
     @RequestMapping(path = "/{id}/delete")
     public RestResponse deleteGame(@PathVariable("id") Integer id) {
         roomManager.deleteRoom(id);
-        roomIdService.returnRoomId(id);
         return new RestResponse("Game deleted", "Confirm");
     }
 
