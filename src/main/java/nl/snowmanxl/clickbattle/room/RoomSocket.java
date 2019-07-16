@@ -32,20 +32,22 @@ public class RoomSocket {
 
     @MessageMapping("/{id}/submit")
     @SendTo("/topic/{id}/gamescore")
-    public SocketMessage<ScoreBroadcast> clickCount(@DestinationVariable Integer id, SocketMessage<SimpleSubmit> message)  {
+    public SocketMessage<ScoreBroadcast> clickCount(@DestinationVariable Integer id, SocketMessage<SimpleSubmit> message) {
         return manager.submitScore(id, message.getPayload());
     }
 
     private void consumeRoomUpdate(Room room) {
         var message = new SocketMessage<>(room);
+        var payload = getPayload(message);
+        LOGGER.trace("Dispatching message {}", payload);
+        webSocket.convertAndSend("/topic/" + room.getId() + "/roomState", payload);
+    }
 
-        //TODO: Make more elegant
+    private String getPayload(SocketMessage<Room> message) {
         try {
-            String payload = MAPPER.writeValueAsString(message);
-            LOGGER.info("Dispatching message {}", payload);
-            webSocket.convertAndSend("/topic/" + room.getId() + "/roomState", payload);
+            return MAPPER.writeValueAsString(message);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

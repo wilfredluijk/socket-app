@@ -32,7 +32,7 @@ public class Room {
         return id;
     }
 
-    public Integer addPlayer(Player player) {
+    public int addPlayer(Player player) {
         var size = players.size();
         player.setId(size);
         players.add(player);
