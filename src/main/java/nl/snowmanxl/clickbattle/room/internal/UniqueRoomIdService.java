@@ -1,5 +1,6 @@
-package nl.snowmanxl.clickbattle.room;
+package nl.snowmanxl.clickbattle.room.internal;
 
+import nl.snowmanxl.clickbattle.room.RoomIdService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

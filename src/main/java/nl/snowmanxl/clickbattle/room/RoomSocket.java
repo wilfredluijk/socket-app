@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.snowmanxl.clickbattle.messages.socket.ScoreBroadcast;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.model.Room;
 import nl.snowmanxl.clickbattle.messages.socket.SimpleSubmit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +35,14 @@ public class RoomSocket {
         return manager.submitScore(id, message.getPayload());
     }
 
-    private void consumeRoomUpdate(Room room) {
+    private void consumeRoomUpdate(GameRoom room) {
         var message = new SocketMessage<>(room);
         var payload = getPayload(message);
         LOGGER.trace("Dispatching message {}", payload);
         webSocket.convertAndSend("/topic/" + room.getId() + "/roomState", payload);
     }
 
-    private String getPayload(SocketMessage<Room> message) {
+    private String getPayload(SocketMessage<GameRoom> message) {
         try {
             return MAPPER.writeValueAsString(message);
         } catch (JsonProcessingException e) {
