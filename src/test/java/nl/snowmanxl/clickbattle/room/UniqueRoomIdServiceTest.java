@@ -20,7 +20,7 @@ class UniqueRoomIdServiceTest {
     private static final int MAX_ROOM_COUNT = 90000;
 
     @Autowired
-    RoomIdService service;
+    public RoomIdService service;
 
     @Test
     public void getAndReturnAllTheNumbersPlusOneGivesException() {

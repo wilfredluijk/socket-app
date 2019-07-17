@@ -1,10 +1,13 @@
 package nl.snowmanxl.clickbattle.model;
 
-public class Player {
-    private String name;
-    private int id;
-    private Integer team;
+import nl.snowmanxl.clickbattle.room.Participant;
 
+public class Player implements Participant {
+    private String name;
+    private String id;
+    private int team;
+
+    @Override
     public String getName() {
         return name;
     }
@@ -13,19 +16,20 @@ public class Player {
         this.name = name;
     }
 
-    public int getId() {
+    @Override
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Integer getTeam() {
+    public int getTeam() {
         return team;
     }
 
-    public void setTeam(Integer team) {
+    public void setTeam(int team) {
         this.team = team;
     }
 

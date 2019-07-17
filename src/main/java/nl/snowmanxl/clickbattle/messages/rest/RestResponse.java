@@ -2,7 +2,7 @@ package nl.snowmanxl.clickbattle.messages.rest;
 
 public class RestResponse {
     String message;
-    String type;
+    MessageType type;
 
     public RestResponse(){}
 
@@ -14,15 +14,15 @@ public class RestResponse {
         this.message = message;
     }
 
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 
-    public RestResponse(String message, String type) {
+    public RestResponse(String message, MessageType type) {
         this.message = message;
         this.type = type;
     }
