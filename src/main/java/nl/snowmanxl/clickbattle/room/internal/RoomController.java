@@ -2,9 +2,7 @@ package nl.snowmanxl.clickbattle.room.internal;
 
 import nl.snowmanxl.clickbattle.messages.rest.RestResponse;
 import nl.snowmanxl.clickbattle.room.Participant;
-import nl.snowmanxl.clickbattle.room.RoomConfig;
 import nl.snowmanxl.clickbattle.room.RoomManager;
-import nl.snowmanxl.clickbattle.room.RoomResponseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +19,7 @@ public class RoomController {
 
     @PostMapping(path = "/new")
     public RestResponse createNewRoom(@RequestBody RoomConfig config) {
-        return new RestResponse(String.valueOf(roomManager.addRoom(config)), RoomResponseType.GET_ROOM_ID);
+        return new RestResponse(String.valueOf(roomManager.createRoom(config)), RoomResponseType.GET_ROOM_ID);
     }
 
     @RequestMapping(path = "/{id}/join")

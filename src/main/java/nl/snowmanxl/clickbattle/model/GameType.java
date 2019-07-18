@@ -1,20 +1,7 @@
 package nl.snowmanxl.clickbattle.model;
 
-import nl.snowmanxl.clickbattle.gametypes.ClickRace;
-import nl.snowmanxl.clickbattle.gametypes.SmallToLarge;
-import nl.snowmanxl.clickbattle.gametypes.SocketGame;
+import nl.snowmanxl.clickbattle.activities.Activity;
 
-public enum GameType {
-    CLICK_RACE, SMALL_TO_LARGE;
+public interface GameType extends Activity {
 
-    public static SocketGame getGame(GameType type) {
-        switch (type){
-            case CLICK_RACE:
-                return new ClickRace();
-            case SMALL_TO_LARGE:
-                return new SmallToLarge();
-        }
-        //Unreachable
-        return null;
-    }
 }

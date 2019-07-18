@@ -2,6 +2,7 @@ package nl.snowmanxl.clickbattle.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.snowmanxl.clickbattle.model.GameType;
+import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

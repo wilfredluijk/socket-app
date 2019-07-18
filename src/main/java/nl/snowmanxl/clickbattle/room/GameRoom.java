@@ -1,6 +1,6 @@
 package nl.snowmanxl.clickbattle.room;
 
-import nl.snowmanxl.clickbattle.gametypes.SocketGame;
+import nl.snowmanxl.clickbattle.activities.SocketGame;
 import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.model.GameType;
 

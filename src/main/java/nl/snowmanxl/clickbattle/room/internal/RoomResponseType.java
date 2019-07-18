@@ -1,4 +1,4 @@
-package nl.snowmanxl.clickbattle.room;
+package nl.snowmanxl.clickbattle.room.internal;
 
 import nl.snowmanxl.clickbattle.messages.rest.MessageType;
 

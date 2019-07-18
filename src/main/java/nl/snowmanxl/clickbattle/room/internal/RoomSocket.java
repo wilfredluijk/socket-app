@@ -1,10 +1,12 @@
-package nl.snowmanxl.clickbattle.room;
+package nl.snowmanxl.clickbattle.room.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.snowmanxl.clickbattle.messages.socket.ScoreBroadcast;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SimpleSubmit;
+import nl.snowmanxl.clickbattle.room.GameRoom;
+import nl.snowmanxl.clickbattle.room.RoomManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
