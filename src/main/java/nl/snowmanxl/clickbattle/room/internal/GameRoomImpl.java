@@ -1,6 +1,6 @@
 package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.gametypes.SocketGame;
+import nl.snowmanxl.clickbattle.activities.SocketGame;
 import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.model.GameType;
 import nl.snowmanxl.clickbattle.room.GameRoom;
@@ -16,12 +16,16 @@ public class GameRoomImpl implements GameRoom {
     private final List<Participant> players = new ArrayList<>();
     private SocketGame game;
 
-    public GameRoomImpl(int id, GameType gameType, Integer maxPlayerCount) {
+    private GameRoomImpl(int id, GameType gameType, Integer maxPlayerCount) {
         this.id = id;
         this.gameType = gameType;
         this.maxPlayerCount = maxPlayerCount;
         this.game = GameType.getGame(gameType);
         Objects.requireNonNull(game).registerGameStateChangeListener(this::handleGameStateChanges);
+    }
+
+    public static GameRoomImpl newGameRoom(int id, GameType gameType, Integer maxPlayerCount) {
+        return new GameRoomImpl(id, gameType, maxPlayerCount);
     }
 
     private void handleGameStateChanges(GameState stateChange) {

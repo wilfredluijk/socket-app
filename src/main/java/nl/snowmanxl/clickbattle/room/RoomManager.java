@@ -4,105 +4,40 @@ import nl.snowmanxl.clickbattle.messages.socket.ScoreBroadcast;
 import nl.snowmanxl.clickbattle.messages.socket.ScoreSubmit;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.model.GameType;
-import nl.snowmanxl.clickbattle.model.Player;
-import nl.snowmanxl.clickbattle.room.internal.GameRoomImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@Component
-public class RoomManager {
+public interface RoomManager {
+    int createRoom(RoomConfig config);
 
-    @Autowired
-    private RoomIdService idService;
+    void broadCastChange(GameRoom room);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
+    void addRoomNotificationListener(Consumer<GameRoom> listener);
 
-    private final Map<Integer, GameRoom> rooms = new HashMap<>();
-    private final List<Consumer<GameRoom>> roomChangeListeners = new ArrayList<>();
+    Optional<GameRoom> getRoom(int id);
 
-    public int addRoom(RoomConfig config) {
-        var id = idService.getNewRoomId();
-        var room = new GameRoomImpl(id, config.getGameType(), config.getMaxPlayerCount());
-        rooms.put(id, room);
-        LOGGER.trace("GameRoomImpl added {}", room);
-        broadCastChange(room);
-        return id;
-    }
+    void deleteRoom(int id);
 
-    private void broadCastChange(GameRoom room) {
-        LOGGER.trace("Broadcast room: {}", room);
-        roomChangeListeners.forEach(listener -> listener.accept(room));
-    }
+    String joinRoom(int id);
 
-    public void addRoomNotificationListener(Consumer<GameRoom> listener) {
-        this.roomChangeListeners.add(listener);
-    }
+    void updatePlayer(int id, Participant participant);
 
-    public Optional<GameRoom> getRoom(Integer id) {
-        return Optional.ofNullable(rooms.get(id));
-    }
+    SocketMessage<ScoreBroadcast> submitScore(int id, ScoreSubmit scoreSubmit);
 
-    public void deleteRoom(Integer id) {
-        rooms.remove(id);
-        idService.returnRoomId(id);
-    }
+    void executeAndBroadcastRoomAction(int id, Consumer<GameRoom> roomConsumer);
 
-    public String joinRoom(int id) {
-        return getRoom(id).map(room -> {
-            var playerId = room.addPlayer(new Player());
-            broadCastChange(room);
-            return playerId;
-        }).orElseThrow(noRoomFoundExeptionSupplier(id));
-    }
+    void startGame(int id);
 
-    public void updatePlayer(Integer id, Participant participant) {
-        executeAndBroadcastRoomAction(id, room -> {
-            room.updatePlayer(participant);
-        });
-    }
+    void resetGame(int id);
 
-    public SocketMessage<ScoreBroadcast> submitScore(Integer id, ScoreSubmit scoreSubmit) {
-        return getRoom(id).map(room -> {
-            var scores = room.scoreForPlayer(scoreSubmit.getPlayerId(), scoreSubmit.getPoints());
-            var state = room.getGameState();
-            var socketMessage = new SocketMessage<ScoreBroadcast>();
-            socketMessage.setPayload(new ScoreBroadcast(scores, state));
-            return socketMessage;
-        }).orElseThrow(noRoomFoundExeptionSupplier(id));
-    }
+    void stopGame(int id);
 
-    private void executeAndBroadcastRoomAction(Integer id, Consumer<GameRoom> roomConsumer) {
-        getRoom(id).ifPresent(room -> {
-            roomConsumer.accept(room);
-            broadCastChange(room);
-        });
-    }
+    GameType getGameTypeOf(int id);
 
-    public void startGame(int id) {
-        executeAndBroadcastRoomAction(id, GameRoom::startGame);
-    }
-
-    public void resetGame(Integer id) {
-        executeAndBroadcastRoomAction(id, GameRoom::resetGame);
-    }
-
-    public void stopGame(Integer id) {
-        executeAndBroadcastRoomAction(id, GameRoom::stopGame);
-    }
-
-    public GameType getGameTypeOf(Integer id) {
-        return getRoom(id).map(GameRoom::getGameType).orElse(null);
-    }
-
-    private Supplier<IllegalArgumentException> noRoomFoundExeptionSupplier(int id) {
+    default Supplier<IllegalArgumentException> noRoomFoundExeptionSupplier(int id) {
         return () -> new IllegalArgumentException("No room found for id: "+ id);
     }
-
-
 }
