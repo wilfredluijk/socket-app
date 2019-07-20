@@ -1,11 +1,15 @@
 package nl.snowmanxl.clickbattle.room;
 
-public interface Room {
+import nl.snowmanxl.clickbattle.activities.Activity;
+import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 
-    int getId();
+public interface Room<T extends Activity> {
 
-    String addPlayer(Participant player);
+    Class<T> getRoomType();
+
+    String addParticipant(Participant player);
 
     void updatePlayer(Participant participant);
 
+    void configureRoom(RoomConfig config);
 }

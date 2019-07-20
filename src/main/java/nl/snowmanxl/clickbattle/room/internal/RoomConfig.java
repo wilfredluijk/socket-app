@@ -30,7 +30,7 @@ public class RoomConfig {
     }
 
     public void setGameType(GameType gameType) {
-        this.type = type;
+        this.type = gameType;
     }
 
     @Override

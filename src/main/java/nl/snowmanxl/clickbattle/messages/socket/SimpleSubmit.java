@@ -1,11 +1,11 @@
 package nl.snowmanxl.clickbattle.messages.socket;
 
 public class SimpleSubmit implements ScoreSubmit {
-    private Integer playerId;
+    private String playerId;
     private Integer scoredPoints;
 
     @Override
-    public Integer getPlayerId() {
+    public String getPlayerId() {
         return playerId;
     }
 
@@ -14,7 +14,7 @@ public class SimpleSubmit implements ScoreSubmit {
         return scoredPoints;
     }
 
-    public void setPlayerId(Integer playerId) {
+    public void setPlayerId(String playerId) {
         this.playerId = playerId;
     }
 

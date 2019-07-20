@@ -5,6 +5,6 @@ import nl.snowmanxl.clickbattle.activities.Activity;
 
 public interface ActivityFactory {
 
-   Activity createActivity(Activity type);
+   Activity createNewActivity(Activity type);
 
 }
