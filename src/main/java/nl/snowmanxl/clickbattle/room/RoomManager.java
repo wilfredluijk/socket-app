@@ -13,11 +13,10 @@ import java.util.function.Supplier;
 public interface RoomManager {
     int createRoom(RoomConfig config);
 
-    void broadCastChange(GameRoom room);
 
-    void addRoomNotificationListener(Consumer<GameRoom> listener);
+    void addRoomNotificationListener(Consumer<Room> listener);
 
-    Optional<GameRoom> getRoom(int id);
+    Optional<Room> getRoom(int id);
 
     void deleteRoom(int id);
 
@@ -25,17 +24,7 @@ public interface RoomManager {
 
     void updatePlayer(int id, Participant participant);
 
-    SocketMessage<ScoreBroadcast> submitScore(int id, ScoreSubmit scoreSubmit);
 
-    void executeAndBroadcastRoomAction(int id, Consumer<GameRoom> roomConsumer);
-
-    void startGame(int id);
-
-    void resetGame(int id);
-
-    void stopGame(int id);
-
-    GameType getGameTypeOf(int id);
 
     default Supplier<IllegalArgumentException> noRoomFoundExeptionSupplier(int id) {
         return () -> new IllegalArgumentException("No room found for id: "+ id);

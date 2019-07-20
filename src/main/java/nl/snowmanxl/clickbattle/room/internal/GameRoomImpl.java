@@ -5,27 +5,23 @@ import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.model.GameType;
 import nl.snowmanxl.clickbattle.room.GameRoom;
 import nl.snowmanxl.clickbattle.room.Participant;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-public class GameRoomImpl implements GameRoom {
-    private int id;
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class GameRoomImpl implements GameRoom<SocketGame> {
     private GameType gameType;
     private GameState gameState;
     private Integer maxPlayerCount;
     private final List<Participant> players = new ArrayList<>();
     private SocketGame game;
 
-    private GameRoomImpl(int id, GameType gameType, Integer maxPlayerCount) {
-        this.id = id;
-        this.gameType = gameType;
-        this.maxPlayerCount = maxPlayerCount;
-        this.game = GameType.getGame(gameType);
-        Objects.requireNonNull(game).registerGameStateChangeListener(this::handleGameStateChanges);
-    }
+    private GameRoomImpl() {
 
-    public static GameRoomImpl newGameRoom(int id, GameType gameType, Integer maxPlayerCount) {
-        return new GameRoomImpl(id, gameType, maxPlayerCount);
     }
 
     private void handleGameStateChanges(GameState stateChange) {
@@ -33,12 +29,12 @@ public class GameRoomImpl implements GameRoom {
     }
 
     @Override
-    public int getId() {
-        return id;
+    public Class<SocketGame> getRoomType() {
+        return SocketGame.class;
     }
 
     @Override
-    public String addPlayer(Participant player) {
+    public String addParticipant(Participant player) {
         var playerId = UUID.randomUUID().toString();
         player.setId(playerId);
         players.add(player);
@@ -50,6 +46,12 @@ public class GameRoomImpl implements GameRoom {
         if (players.removeIf(p -> p.getId().equals(participant.getId()))) {
             players.add(participant);
         }
+    }
+
+    @Override
+    public void configureRoom(RoomConfig config) {
+        this.maxPlayerCount = config.getMaxPlayerCount();
+        this.gameType = (GameType) config.getGameType();
     }
 
     @Override
@@ -116,7 +118,6 @@ public class GameRoomImpl implements GameRoom {
     @Override
     public String toString() {
         return "GameRoomImpl{" +
-                "id=" + id +
                 ", playerCount=" + players.size() +
                 ", gameType=" + gameType +
                 ", gameState=" + gameState +

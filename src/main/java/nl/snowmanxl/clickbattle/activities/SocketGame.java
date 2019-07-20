@@ -6,7 +6,7 @@ import nl.snowmanxl.clickbattle.model.GameType;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public interface SocketGame extends Activity  {
+public interface SocketGame extends GameType  {
     Integer getMaxNrOfPlayers();
     Integer getMaxDuration();
     Integer getScoreLimit();

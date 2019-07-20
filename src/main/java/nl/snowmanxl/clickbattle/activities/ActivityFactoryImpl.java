@@ -16,7 +16,7 @@ public class ActivityFactoryImpl implements ActivityFactory {
     }
 
     @Override
-    public Activity createActivity(Activity type) {
+    public Activity createNewActivity(Activity type) {
         return providers.stream()
                 .filter(provider -> provider.getTypeOfProvider().equals(type.getClass()))
                 .map(ActivityProvider::getNewActivity)
