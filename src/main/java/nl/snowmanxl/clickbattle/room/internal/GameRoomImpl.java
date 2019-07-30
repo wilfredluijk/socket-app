@@ -21,7 +21,6 @@ public class GameRoomImpl implements GameRoom<SocketGame> {
     private SocketGame game;
 
     private GameRoomImpl() {
-
     }
 
     private void handleGameStateChanges(GameState stateChange) {
@@ -34,6 +33,11 @@ public class GameRoomImpl implements GameRoom<SocketGame> {
     }
 
     @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
     public String addParticipant(Participant player) {
         var playerId = UUID.randomUUID().toString();
         player.setId(playerId);
@@ -42,7 +46,7 @@ public class GameRoomImpl implements GameRoom<SocketGame> {
     }
 
     @Override
-    public void updatePlayer(Participant participant) {
+    public void updateParticipant(Participant participant) {
         if (players.removeIf(p -> p.getId().equals(participant.getId()))) {
             players.add(participant);
         }

@@ -7,9 +7,11 @@ public interface Room<T extends Activity> {
 
     Class<T> getRoomType();
 
+    int getId();
+
     String addParticipant(Participant player);
 
-    void updatePlayer(Participant participant);
+    void updateParticipant(Participant participant);
 
     void configureRoom(RoomConfig config);
 }
