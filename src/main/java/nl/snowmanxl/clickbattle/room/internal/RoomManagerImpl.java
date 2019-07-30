@@ -19,7 +19,6 @@ public class RoomManagerImpl implements RoomManager {
     private final RoomIdService idService;
     private final RoomFactory roomFactory;
 
-
     public RoomManagerImpl(RoomIdService idService, RoomFactory roomFactory) {
         this.idService = idService;
         this.roomFactory = roomFactory;
@@ -57,14 +56,12 @@ public class RoomManagerImpl implements RoomManager {
             var playerId = room.addParticipant(new Player());
             broadCastChange(room);
             return playerId;
-        }).orElseThrow(noRoomFoundExeptionSupplier(id));
+        }).orElseThrow(noRoomFoundExceptionSupplier(id));
     }
 
     @Override
-    public void updatePlayer(int id, Participant participant) {
-        executeAndBroadcastRoomAction(id, room -> {
-            room.updatePlayer(participant);
-        });
+    public void updateParticipant(int id, Participant participant) {
+        executeAndBroadcastRoomAction(id, room -> room.updateParticipant(participant));
     }
 
     private void executeAndBroadcastRoomAction(int id, Consumer<Room> roomConsumer) {

@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RoomControllerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomControllerTest.class);
-    private static final RoomConfig CONFIG = new RoomConfig(100, GameType.CLICK_RACE);
+//    private static final RoomConfig CONFIG = new RoomConfig(100, GameType.CLICK_RACE);
 
     private final MockMvc mvc;
 
@@ -92,11 +92,12 @@ class RoomControllerTest {
     }
 
     private String createNewRoomByHttpCall() throws Exception {
-        MvcResult result = mvc.perform(post("/room/new")
-                .content(new ObjectMapper().writeValueAsString(CONFIG))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn();
-        return result.getResponse().getContentAsString();
+//        MvcResult result = mvc.perform(post("/room/new")
+//                .content(new ObjectMapper().writeValueAsString(CONFIG))
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk()).andReturn();
+//        return result.getResponse().getContentAsString();
+        return null;
     }
 
     private class ResultCaptor<T> implements Answer<T> {
