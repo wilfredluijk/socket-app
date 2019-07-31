@@ -26,7 +26,7 @@ public class MessageListenerTest {
 
     @Test
     public void testConsumerCreation() {
-       manager.message(0, new TestMessage());
+       manager.messageToRoom(0, new TestMessage());
     }
 
 }
