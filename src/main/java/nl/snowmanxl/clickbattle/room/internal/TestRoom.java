@@ -13,7 +13,7 @@ public class TestRoom {
 
     @Autowired
     public TestRoom(MessageListenerManager manager) {
-       manager.createListeners(0, this);
+       manager.createRoomBasedListeners(0, this);
     }
 
     @OnSocketMessage(TestMessage.class)

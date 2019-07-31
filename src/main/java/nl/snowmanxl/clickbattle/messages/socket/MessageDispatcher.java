@@ -18,7 +18,7 @@ public class MessageDispatcher {
     }
 
     void dispatchToRoom(int roomId, SocketMessage message) {
-        LOGGER.debug("Dispatching: {}, message: {}", roomId, message);
-        webSocket.convertAndSend("/topic/" + roomId + "/message", message);
+        LOGGER.debug("Dispatching: {}, messageToRoom: {}", roomId, message);
+        webSocket.convertAndSend("/topic/" + roomId + "/messageToRoom", message);
     }
 }

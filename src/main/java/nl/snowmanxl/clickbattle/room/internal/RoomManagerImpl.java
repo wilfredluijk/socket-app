@@ -1,6 +1,7 @@
 package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.model.Player;
+import nl.snowmanxl.clickbattle.messages.socket.MessageListenerManager;
+import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,12 @@ public class RoomManagerImpl implements RoomManager {
     private final List<Consumer<Room>> roomChangeListeners = new ArrayList<>();
     private final RoomIdService idService;
     private final RoomFactory roomFactory;
+    private final MessageListenerManager messageListenerManager;
 
-    public RoomManagerImpl(RoomIdService idService, RoomFactory roomFactory) {
+    public RoomManagerImpl(RoomIdService idService, RoomFactory roomFactory, MessageListenerManager messageListenerManager) {
         this.idService = idService;
         this.roomFactory = roomFactory;
+        this.messageListenerManager = messageListenerManager;
     }
 
     @Override
@@ -48,15 +51,16 @@ public class RoomManagerImpl implements RoomManager {
     public void deleteRoom(int id) {
         rooms.remove(id);
         idService.returnRoomId(id);
+        messageListenerManager.removeRoomListeners(id);
     }
 
     @Override
     public String joinRoom(int id) {
         return getRoom(id).map(room -> {
-            var playerId = room.addParticipant(new Player());
+            var playerId = room.addParticipant(new SimpleParticipant());
             broadCastChange(room);
             return playerId;
-        }).orElseThrow(noRoomFoundExceptionSupplier(id));
+        }).orElseThrow(() -> noRoomFoundException(id));
     }
 
     @Override

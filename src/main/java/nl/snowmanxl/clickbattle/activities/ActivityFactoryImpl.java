@@ -8,19 +8,12 @@ import java.util.List;
 @Service
 public class ActivityFactoryImpl implements ActivityFactory {
 
-    private final List<ActivityProvider<?>> providers;
-
-    @Autowired
-    public ActivityFactoryImpl(List<ActivityProvider<?>> providers) {
-        this.providers = providers;
-    }
-
     @Override
-    public Activity createNewActivity(Activity type) {
-        return providers.stream()
-                .filter(provider -> provider.getTypeOfProvider().equals(type.getClass()))
-                .map(ActivityProvider::getNewActivity)
-                .findAny()
-                .orElseThrow(IllegalArgumentException::new);
+    public Activity createNewActivity(ActivityType type) {
+        if (type == ActivityType.CLICK_RACE) {
+            return new ClickRace();
+        }
+        throw new UnsupportedOperationException("Not implemented!");
     }
+
 }

@@ -4,13 +4,11 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -26,31 +24,35 @@ public class MessageListenerManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerManager.class);
 
-    private final Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> consumersMaps
+    private final Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> roomMessageListeners
             = new HashMap<>();
-    private Reflections reflections;
-    private int roomId;
 
-    public <T> void createListeners(int roomId, T inst) {
-        reflections = new Reflections(inst.getClass(), new MethodAnnotationsScanner());
-        this.roomId = roomId;
-        initiateListeners(inst);
+    public void removeRoomListeners(int roomId) {
+        roomMessageListeners.remove(roomId);
     }
 
-    private <T> void initiateListeners(T instance) {
-        Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> collect = new HashMap<>();
-        collect.put(roomId, reflections.getMethodsAnnotatedWith(OnSocketMessage.class).stream()
+    public <T> void createRoomBasedListeners(int roomId, T inst) {
+        var reflections = new Reflections(inst.getClass(), new MethodAnnotationsScanner());
+        Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>> listenersPerType
+                = reflections.getMethodsAnnotatedWith(OnSocketMessage.class).stream()
                 .collect(Collectors.groupingBy(method -> method.getDeclaredAnnotation(OnSocketMessage.class).value(),
-                        Collectors.mapping(method -> mapMethodToConsumer(method, instance), Collectors.toSet()))));
-        addListenersToMapping(collect);
+                        Collectors.mapping(method -> mapMethodToConsumer(method, inst), Collectors.toSet())));
+
+        Optional.ofNullable(listenersPerType).ifPresent(listeners -> addToListeners(roomId, listenersPerType));
+    }
+
+    private void addToListeners(int roomId, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>> maps) {
+        Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> tmpMap = new HashMap<>();
+        tmpMap.put(roomId, maps);
+        roomMessageListeners.putAll(tmpMap);
     }
 
     @SuppressWarnings("unchecked")
     private <T> Consumer<SocketMessage> mapMethodToConsumer(Method method, T implInstance) {
-        Class<? extends SocketMessage> methodParameterType = method.getDeclaredAnnotation(OnSocketMessage.class).value();
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        var methodParameterType = method.getDeclaredAnnotation(OnSocketMessage.class).value();
+        var lookup = MethodHandles.lookup();
         try {
-            MethodHandle factory = LambdaMetafactory.metafactory(
+            var factory = LambdaMetafactory.metafactory(
                     lookup,
                     "accept",
                     MethodType.methodType(Consumer.class, method.getDeclaringClass()),
@@ -64,21 +66,12 @@ public class MessageListenerManager {
         }
     }
 
-    public final void addListenersToMapping(Map<Integer, Map<Class<? extends SocketMessage>,
-            Set<Consumer<SocketMessage>>>> newConsumers) {
-        consumersMaps.putAll(newConsumers);
-    }
-
-    public Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> getConsumersMaps() {
-        return consumersMaps;
-    }
-
-    @MessageMapping("/{id}/message")
-    public void message(@DestinationVariable Integer id, SocketMessage message) {
-        Optional.ofNullable(consumersMaps.get(id)).ifPresent(
-                consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())).ifPresent(
-                        consumers -> consumers.forEach(
-                                consumer -> consumer.accept(message))));
+    @MessageMapping("/{id}/messageToRoom")
+    public void messageToRoom(@DestinationVariable Integer id, SocketMessage message) {
+        Optional.ofNullable(roomMessageListeners.get(id))
+                .flatMap(consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())))
+                .ifPresent(consumers -> consumers.forEach(
+                        consumer -> consumer.accept(message)));
     }
 
 

@@ -19,7 +19,7 @@ public interface RoomManager {
 
     void updateParticipant(int id, Participant participant);
 
-    default Supplier<IllegalArgumentException> noRoomFoundExceptionSupplier(int id) {
-        return () -> new IllegalArgumentException("No room found for id: " + id);
+    default IllegalArgumentException noRoomFoundException(int id) {
+        return new IllegalArgumentException("No room found for id: " + id);
     }
 }
