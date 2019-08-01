@@ -19,9 +19,4 @@ public interface Room {
 
     int getId();
 
-    RoomConfig getConfig();
-
-    Set<Participant> getParticipants();
-
-
 }

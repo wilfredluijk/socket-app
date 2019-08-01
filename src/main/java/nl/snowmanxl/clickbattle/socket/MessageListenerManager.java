@@ -2,19 +2,25 @@ package nl.snowmanxl.clickbattle.socket;
 
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
+import nl.snowmanxl.clickbattle.model.Player;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -69,12 +75,11 @@ public class MessageListenerManager {
     }
 
     @MessageMapping("/{id}/messageToRoom")
-    public void messageToRoom(@DestinationVariable Integer id, SocketMessage message) {
+    public void messageToRoom(@DestinationVariable int id, SocketMessage message) {
         Optional.ofNullable(roomMessageListeners.get(id))
                 .flatMap(consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())))
                 .ifPresent(consumers -> consumers.forEach(
                         consumer -> consumer.accept(message)));
     }
-
 
 }

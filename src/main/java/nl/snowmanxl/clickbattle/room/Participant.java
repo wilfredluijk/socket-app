@@ -8,5 +8,4 @@ public interface Participant {
 
     void setId(String id);
 
-    int getTeam();
 }

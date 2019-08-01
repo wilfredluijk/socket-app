@@ -16,11 +16,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RoomImpl implements Room, MessageListenerCapable {
@@ -31,10 +26,10 @@ public class RoomImpl implements Room, MessageListenerCapable {
     private final ActivityFactory activityFactory;
     private final MessageDispatcher messageDispatcher;
 
-    private Activity activity;
     private int id;
-    private RoomConfig config;
-    private Set<Participant> participants = new HashSet<>();
+    //TODO: Check if subclass is really required
+    private RoomData data;
+    private Activity activity;
 
     public RoomImpl(MessageListenerManager manager, ActivityFactory activityFactory, MessageDispatcher messageDispatcher) {
         this.manager = manager;
@@ -45,29 +40,26 @@ public class RoomImpl implements Room, MessageListenerCapable {
     @Override
     public void configureRoom(int id, RoomConfig config) {
         this.id = id;
-        this.config = config;
+        enableMessageListeners();
+        data = new RoomData(id, config);
         activity = this.activityFactory.createNewActivity(config.getActivityType());
-        activity.registerUpdateListener(this::dispatchMessage);
+        activity.registerMessageListener(this::dispatchMessage);
         broadcastUpdate();
     }
 
     @Override
     public String addParticipant(Participant participant) {
-        var playerId = UUID.randomUUID().toString();
-        participant.setId(playerId);
-        participants.add(participant);
+        String id = data.addParticipant(participant);
+        activity.consumeParticipantCreation(participant);
         broadcastUpdate();
-        return playerId;
+        return id;
     }
 
     @Override
     public void updateParticipant(Participant participant) {
-        Objects.requireNonNull(participant);
-        if (participant.getId() != null) {
-            removeParticipant(participant);
-            this.participants.add(participant);
-            broadcastUpdate();
-        }
+       data.updateParticipant(participant);
+       activity.consumeParticipantUpdate(participant);
+       broadcastUpdate();
     }
 
     @Override
@@ -77,12 +69,7 @@ public class RoomImpl implements Room, MessageListenerCapable {
 
     @Override
     public void removeParticipant(RemoveParticipantMessage message) {
-        removeParticipant(message.getParticipant());
-        broadcastUpdate();
-    }
-
-    private void removeParticipant(Participant participant) {
-        this.participants.removeIf((part) -> Objects.equals(part.getId(), participant.getId()));
+        removeParticipant(message.getId());
         broadcastUpdate();
     }
 
@@ -91,14 +78,10 @@ public class RoomImpl implements Room, MessageListenerCapable {
         return id;
     }
 
-    @Override
-    public RoomConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public Set<Participant> getParticipants() {
-        return participants;
+    private void removeParticipant(String id) {
+        data.removeParticipant(id);
+        activity.consumeParticipantRemoval(id);
+        broadcastUpdate();
     }
 
     private void dispatchMessage(SocketMessage message) {
@@ -107,7 +90,7 @@ public class RoomImpl implements Room, MessageListenerCapable {
 
     private void broadcastUpdate() {
             LOGGER.trace("Dispatch room update: {}", this);
-            dispatchMessage(new RoomUpdateMessage(RoomData.of(this)));
+            dispatchMessage(new RoomUpdateMessage(data));
     }
 
     @Override
@@ -117,8 +100,6 @@ public class RoomImpl implements Room, MessageListenerCapable {
                 ", activityFactory=" + activityFactory +
                 ", activity=" + activity +
                 ", id=" + id +
-                ", config=" + config +
-                ", participants=" + participants +
                 '}';
     }
 }
