@@ -2,10 +2,14 @@ package nl.snowmanxl.clickbattle.room;
 
 import nl.snowmanxl.clickbattle.activities.Activity;
 import nl.snowmanxl.clickbattle.activities.ActivityFactory;
+import nl.snowmanxl.clickbattle.messages.socket.MessageDispatcher;
 import nl.snowmanxl.clickbattle.messages.socket.MessageListenerManager;
-import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.RemoveParticipantMessage;
+import nl.snowmanxl.clickbattle.messages.socket.RoomUpdateMessage;
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,29 +18,35 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RoomImpl implements Room, MessageListenerCapable {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomImpl.class);
+
     private final MessageListenerManager manager;
     private final ActivityFactory activityFactory;
+    private final MessageDispatcher messageDispatcher;
 
     private Activity activity;
     private int id;
     private RoomConfig config;
     private Set<Participant> participants = new HashSet<>();
-    private Consumer<Room> updateConsumer;
 
-    public RoomImpl(MessageListenerManager manager, ActivityFactory activityFactory) {
+    public RoomImpl(MessageListenerManager manager, ActivityFactory activityFactory, MessageDispatcher messageDispatcher) {
         this.manager = manager;
         this.activityFactory = activityFactory;
+        this.messageDispatcher = messageDispatcher;
     }
 
     @Override
-    public void enableMessageListeners() {
-        manager.createRoomBasedListeners(id, this);
+    public void configureRoom(int id, RoomConfig config) {
+        this.id = id;
+        this.config = config;
+        activity = this.activityFactory.createNewActivity(config.getActivityType());
+        activity.registerUpdateListener(this::dispatchMessage);
+        broadcastUpdate();
     }
 
     @Override
@@ -44,6 +54,7 @@ public class RoomImpl implements Room, MessageListenerCapable {
         var playerId = UUID.randomUUID().toString();
         participant.setId(playerId);
         participants.add(participant);
+        broadcastUpdate();
         return playerId;
     }
 
@@ -53,24 +64,24 @@ public class RoomImpl implements Room, MessageListenerCapable {
         if (participant.getId() != null) {
             removeParticipant(participant);
             this.participants.add(participant);
+            broadcastUpdate();
         }
     }
 
     @Override
-    @OnSocketMessage(RemoveParticipantMessage.class)
-    public void removeParticipant(RemoveParticipantMessage message) {
-        removeParticipant(message.getParticipant());
+    public void enableMessageListeners() {
+        manager.createRoomBasedListeners(id, this);
     }
 
     @Override
-    public void configureRoom(int id, RoomConfig config) {
-        this.id = id;
-        this.config = config;
-        activity = this.activityFactory.createNewActivity(config.getActivityType());
+    public void removeParticipant(RemoveParticipantMessage message) {
+        removeParticipant(message.getParticipant());
+        broadcastUpdate();
     }
 
     private void removeParticipant(Participant participant) {
         this.participants.removeIf((part) -> Objects.equals(part.getId(), participant.getId()));
+        broadcastUpdate();
     }
 
     @Override
@@ -88,14 +99,13 @@ public class RoomImpl implements Room, MessageListenerCapable {
         return participants;
     }
 
-    @Override
-    public RoomData getRoomData() {
-        return RoomData.of(this);
+    private void dispatchMessage(SocketMessage message) {
+        messageDispatcher.dispatchToRoom(id, message);
     }
 
-    @Override
-    public void registerUpdateConsumer(Consumer<Room> updateConsumer) {
-        this.updateConsumer = updateConsumer;
+    private void broadcastUpdate() {
+            LOGGER.trace("Dispatch room update: {}", this);
+            dispatchMessage(new RoomUpdateMessage(RoomData.of(this)));
     }
 
     @Override

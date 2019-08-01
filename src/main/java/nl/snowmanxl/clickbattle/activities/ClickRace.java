@@ -1,43 +1,46 @@
 package nl.snowmanxl.clickbattle.activities;
 
+import nl.snowmanxl.clickbattle.messages.socket.ClickRaceGameUpdateMessage;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.ResetSocketGameMessage;
 import nl.snowmanxl.clickbattle.messages.socket.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.StartSocketGameMessage;
 import nl.snowmanxl.clickbattle.messages.socket.StopSocketGameMessage;
+import nl.snowmanxl.clickbattle.model.ClickRaceData;
 import nl.snowmanxl.clickbattle.model.GameState;
-import nl.snowmanxl.clickbattle.model.Score;
+import nl.snowmanxl.clickbattle.model.ClickRaceScore;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class ClickRace implements SocketGame {
 
-    //TODO: Listen for messages
-
     private GameState gameState = GameState.WAITING;
-    private Score score = new Score();
-    private Consumer<GameState> gameStateConsumer;
+    private ClickRaceScore score = new ClickRaceScore();
+    private Consumer<SocketMessage> messageConsumer;
 
     @Override
     public void start(StartSocketGameMessage message) {
         gameState = GameState.STARTED;
+        broadcastUpdate();
     }
 
     @Override
     public void reset(ResetSocketGameMessage message) {
         gameState = GameState.WAITING;
-        score = new Score();
+        score = new ClickRaceScore();
+        broadcastUpdate();
     }
 
     @Override
     public void stop(StopSocketGameMessage message) {
         gameState = GameState.STOPPED;
+        broadcastUpdate();
     }
 
     @OnSocketMessage(ScoreForClickRaceMessage.class)
     public void scoreForClickRace(ScoreForClickRaceMessage message) {
-
+        broadcastUpdate();
     }
 
     @Override
@@ -46,5 +49,14 @@ public class ClickRace implements SocketGame {
                 "gameState=" + gameState +
                 ", score=" + score +
                 '}';
+    }
+
+    private void broadcastUpdate() {
+        messageConsumer.accept(new ClickRaceGameUpdateMessage(new ClickRaceData(gameState, score)));
+    }
+
+    @Override
+    public void registerUpdateListener(Consumer<SocketMessage> messageConsumer) {
+        this.messageConsumer = messageConsumer;
     }
 }
