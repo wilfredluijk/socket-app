@@ -1,5 +1,7 @@
-package nl.snowmanxl.clickbattle.messages.socket;
+package nl.snowmanxl.clickbattle.socket;
 
+import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;

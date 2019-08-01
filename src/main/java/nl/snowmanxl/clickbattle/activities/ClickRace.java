@@ -1,12 +1,12 @@
 package nl.snowmanxl.clickbattle.activities;
 
-import nl.snowmanxl.clickbattle.messages.socket.ClickRaceGameUpdateMessage;
+import nl.snowmanxl.clickbattle.messages.socket.pl.ClickRaceGameUpdateMessage;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.ResetSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.ResetSocketGameMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.StartSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.StopSocketGameMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.StartSocketGameMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.StopSocketGameMessage;
 import nl.snowmanxl.clickbattle.model.ClickRaceData;
 import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.model.ClickRaceScore;

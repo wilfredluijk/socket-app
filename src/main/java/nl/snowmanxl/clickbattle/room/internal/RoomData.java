@@ -1,6 +1,7 @@
-package nl.snowmanxl.clickbattle.room;
+package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
+import nl.snowmanxl.clickbattle.room.Participant;
+import nl.snowmanxl.clickbattle.room.Room;
 
 import java.util.HashSet;
 import java.util.Set;

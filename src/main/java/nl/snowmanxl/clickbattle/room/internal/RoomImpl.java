@@ -1,13 +1,15 @@
-package nl.snowmanxl.clickbattle.room;
+package nl.snowmanxl.clickbattle.room.internal;
 
 import nl.snowmanxl.clickbattle.activities.Activity;
 import nl.snowmanxl.clickbattle.activities.ActivityFactory;
-import nl.snowmanxl.clickbattle.messages.socket.MessageDispatcher;
-import nl.snowmanxl.clickbattle.messages.socket.MessageListenerManager;
-import nl.snowmanxl.clickbattle.messages.socket.RemoveParticipantMessage;
-import nl.snowmanxl.clickbattle.messages.socket.RoomUpdateMessage;
+import nl.snowmanxl.clickbattle.socket.MessageDispatcher;
+import nl.snowmanxl.clickbattle.socket.MessageListenerManager;
+import nl.snowmanxl.clickbattle.messages.socket.bl.RemoveParticipantMessage;
+import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
+import nl.snowmanxl.clickbattle.room.MessageListenerCapable;
+import nl.snowmanxl.clickbattle.room.Participant;
+import nl.snowmanxl.clickbattle.room.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

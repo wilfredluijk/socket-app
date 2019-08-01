@@ -1,7 +1,7 @@
 package nl.snowmanxl.clickbattle.room;
 
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.RemoveParticipantMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.RemoveParticipantMessage;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 
 import java.util.Set;
