@@ -1,20 +1,19 @@
 package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.activities.Activity;
-import nl.snowmanxl.clickbattle.model.GameType;
+import nl.snowmanxl.clickbattle.activities.ActivityType;
 
 import java.util.Objects;
 
 public class RoomConfig {
     private int maxPlayerCount;
-    private Activity type;
+    private ActivityType activityType;
 
     public RoomConfig() {
     }
 
-    public RoomConfig(int maxPlayerCount, Activity type) {
+    public RoomConfig(int maxPlayerCount, ActivityType type) {
         this.maxPlayerCount = maxPlayerCount;
-        this.type = type;
+        this.activityType = type;
     }
 
     public int getMaxPlayerCount() {
@@ -25,12 +24,12 @@ public class RoomConfig {
         this.maxPlayerCount = maxPlayerCount;
     }
 
-    public Activity getGameType() {
-        return type;
+    public ActivityType getActivityType() {
+        return activityType;
     }
 
-    public void setGameType(GameType gameType) {
-        this.type = gameType;
+    public void setGameType(ActivityType activityType) {
+        this.activityType = activityType;
     }
 
     @Override
@@ -38,12 +37,12 @@ public class RoomConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoomConfig that = (RoomConfig) o;
-        return Objects.equals(maxPlayerCount, that.maxPlayerCount) &&
-                type == that.type;
+        return maxPlayerCount == that.maxPlayerCount &&
+                activityType == that.activityType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxPlayerCount, type);
+        return Objects.hash(maxPlayerCount, activityType);
     }
 }

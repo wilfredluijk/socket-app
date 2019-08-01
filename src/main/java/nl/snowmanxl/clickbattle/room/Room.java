@@ -5,6 +5,9 @@ import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.RemoveParticipantMessage;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 
+import java.util.Set;
+import java.util.function.Consumer;
+
 public interface Room {
 
     String addParticipant(Participant participant);
@@ -15,4 +18,14 @@ public interface Room {
     void removeParticipant(RemoveParticipantMessage message);
 
     void configureRoom(int id, RoomConfig config);
+
+    int getId();
+
+    RoomConfig getConfig();
+
+    Set<Participant> getParticipants();
+
+    RoomData getRoomData();
+
+    void registerUpdateConsumer(Consumer<Room> updateConsumer);
 }

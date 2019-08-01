@@ -2,6 +2,7 @@ package nl.snowmanxl.clickbattle.activities;
 
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.ResetSocketGameMessage;
+import nl.snowmanxl.clickbattle.messages.socket.ScoreForClickRaceMessage;
 import nl.snowmanxl.clickbattle.messages.socket.StartSocketGameMessage;
 import nl.snowmanxl.clickbattle.messages.socket.StopSocketGameMessage;
 import nl.snowmanxl.clickbattle.model.GameState;
@@ -32,6 +33,11 @@ public class ClickRace implements SocketGame {
     @Override
     public void stop(StopSocketGameMessage message) {
         gameState = GameState.STOPPED;
+    }
+
+    @OnSocketMessage(ScoreForClickRaceMessage.class)
+    public void scoreForClickRace(ScoreForClickRaceMessage message) {
+
     }
 
     @Override
