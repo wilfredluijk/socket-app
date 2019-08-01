@@ -1,6 +1,7 @@
 package nl.snowmanxl.clickbattle.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.snowmanxl.clickbattle.activities.ActivityType;
 import nl.snowmanxl.clickbattle.model.GameType;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 import org.junit.Assert;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RoomControllerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomControllerTest.class);
-//    private static final RoomConfig CONFIG = new RoomConfig(100, GameType.CLICK_RACE);
+    private static final RoomConfig CONFIG = new RoomConfig(100, ActivityType.CLICK_RACE);
 
     private final MockMvc mvc;
 
@@ -45,7 +46,7 @@ class RoomControllerTest {
 
     @Test
     void createNewRoomUsesUniqueRoomNames() throws Exception {
-        int roomCount = 9999;
+        int roomCount = 100;
         for (int idx = 1; idx <= roomCount; idx++) {
             var uniques = new HashSet<>();
             Assert.assertTrue(uniques.add(createNewRoomByHttpCall()));
@@ -53,67 +54,20 @@ class RoomControllerTest {
     }
 
     @Test
-    void joinRoom() {
-    }
-
-    @Test
-    void updatePlayer() {
-    }
-
-    @Test
-    void getGameType() {
-    }
-
-    @Test
-    void startGame() {
-    }
-
-    @Test
-    void resetGame() {
-    }
-
-    @Test
-    void deleteGame() throws Exception {
-        deleteRoomByHttpCall(100);
-    }
-
-    @Test
-    void stopGame() {
-
-
-    }
-
-    private void deleteRoomByHttpCall(int id) throws Exception {
-        mvc.perform(get("/room/{id}/delete", id)
+    void createAndDeleteRoom() throws Exception {
+        var response = createNewRoomByHttpCall();
+        var id = response.split("\"")[3];
+        mvc.perform(get("/room/{id}/delete", Integer.parseInt(id))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-
+                .andExpect(status().is(200));
     }
+
 
     private String createNewRoomByHttpCall() throws Exception {
-//        MvcResult result = mvc.perform(post("/room/new")
-//                .content(new ObjectMapper().writeValueAsString(CONFIG))
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk()).andReturn();
-//        return result.getResponse().getContentAsString();
-        return null;
-    }
-
-    private class ResultCaptor<T> implements Answer<T> {
-
-        private final List<T> results = new ArrayList<>();
-
-        public List<T> getResults() {
-            return results;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public T answer(InvocationOnMock invocationOnMock) throws Throwable {
-            T value = (T) invocationOnMock.callRealMethod();
-            results.add(value);
-            return value;
-        }
+        MvcResult result = mvc.perform(post("/room/new")
+                .content(new ObjectMapper().writeValueAsString(CONFIG))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        return result.getResponse().getContentAsString();
     }
 }

@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class MessageListenerManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerManager.class);
-
     private final Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> roomMessageListeners
             = new HashMap<>();
 

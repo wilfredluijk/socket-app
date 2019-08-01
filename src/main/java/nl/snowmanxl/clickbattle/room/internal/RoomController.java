@@ -34,4 +34,9 @@ public class RoomController {
         return new RestResponse("Player updated", RoomResponseType.CONFIRMATION);
     }
 
+    @RequestMapping(path = "/{id}/delete")
+    public RestResponse deleteGame(@PathVariable("id") int id) {
+        roomManager.deleteRoom(id);
+        return new RestResponse("Game deleted", RoomResponseType.CONFIRMATION);
+    }
 }
