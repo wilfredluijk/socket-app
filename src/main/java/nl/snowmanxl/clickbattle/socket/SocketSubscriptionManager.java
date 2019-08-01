@@ -47,10 +47,15 @@ public class SocketSubscriptionManager {
         String sessionId = sha.getSessionId();
 
         Optional.ofNullable(playerSessionMap.get(sessionId))
-                .ifPresent(mapping -> manager.messageToRoom(Integer.parseInt(mapping.roomId),
-                        new RemoveParticipantMessage(mapping.playerId)));
+                .ifPresent(mapping -> {
+                    manager.messageToRoom(Integer.parseInt(mapping.roomId), new RemoveParticipantMessage(mapping.playerId));
+                    playerSessionMap.remove(sessionId);
+                });
         Optional.ofNullable(organizersMap.get(sessionId))
-                .ifPresent(roomId -> roomManager.deleteRoom(Integer.parseInt(roomId)));
+                .ifPresent(roomId -> {
+                    organizersMap.remove(sessionId);
+                    roomManager.deleteRoom(Integer.parseInt(roomId));
+                });
     }
 
     private class RoomPlayerMapping {
