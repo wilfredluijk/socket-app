@@ -9,8 +9,6 @@ import java.util.function.Supplier;
 public interface RoomManager {
     int createRoom(RoomConfig config);
 
-    void addRoomNotificationListener(Consumer<Room> listener);
-
     Optional<Room> getRoom(int id);
 
     void deleteRoom(int id);
