@@ -1,7 +1,7 @@
-package nl.snowmanxl.clickbattle.messages.socket;
+package nl.snowmanxl.clickbattle.messages.socket.pl;
 
-import nl.snowmanxl.clickbattle.room.Room;
-import nl.snowmanxl.clickbattle.room.RoomData;
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
+import nl.snowmanxl.clickbattle.room.internal.RoomData;
 
 public class RoomUpdateMessage implements SocketMessage {
     RoomData room;

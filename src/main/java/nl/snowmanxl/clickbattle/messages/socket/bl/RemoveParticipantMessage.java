@@ -1,5 +1,6 @@
-package nl.snowmanxl.clickbattle.messages.socket;
+package nl.snowmanxl.clickbattle.messages.socket.bl;
 
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.room.Participant;
 
 public class RemoveParticipantMessage implements SocketMessage {

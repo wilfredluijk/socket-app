@@ -1,6 +1,6 @@
 package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.messages.socket.MessageListenerManager;
+import nl.snowmanxl.clickbattle.socket.MessageListenerManager;
 import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.Participant;
 import nl.snowmanxl.clickbattle.room.Room;

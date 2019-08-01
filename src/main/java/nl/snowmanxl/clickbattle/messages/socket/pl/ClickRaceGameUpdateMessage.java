@@ -1,5 +1,6 @@
-package nl.snowmanxl.clickbattle.messages.socket;
+package nl.snowmanxl.clickbattle.messages.socket.pl;
 
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.model.ClickRaceData;
 
 public class ClickRaceGameUpdateMessage implements SocketMessage {
