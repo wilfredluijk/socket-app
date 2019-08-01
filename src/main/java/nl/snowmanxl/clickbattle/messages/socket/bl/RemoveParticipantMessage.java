@@ -5,17 +5,17 @@ import nl.snowmanxl.clickbattle.room.Participant;
 
 public class RemoveParticipantMessage implements SocketMessage {
 
-    private Participant participant;
+    private String id;
 
-    public RemoveParticipantMessage(Participant participant) {
-        this.participant = participant;
+    public RemoveParticipantMessage(String id) {
+        this.id = id;
     }
 
-    public Participant getParticipant() {
-        return participant;
+    public String getId() {
+        return id;
     }
 
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
+    public void setId(String id) {
+        this.id = id;
     }
 }

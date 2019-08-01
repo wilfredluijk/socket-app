@@ -1,9 +1,17 @@
 package nl.snowmanxl.clickbattle.activities;
 
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
+import nl.snowmanxl.clickbattle.room.Participant;
 
 import java.util.function.Consumer;
 
 public interface Activity {
-   void registerUpdateListener(Consumer<SocketMessage> messageConsumer);
+
+    void registerMessageListener(Consumer<SocketMessage> messageConsumer);
+
+    void consumeParticipantUpdate(Participant participant);
+
+    void consumeParticipantCreation(Participant participant);
+
+    void consumeParticipantRemoval(String id);
 }
