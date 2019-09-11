@@ -6,6 +6,13 @@ public class SimpleParticipant implements Participant {
     private String name;
     private String id;
 
+    public SimpleParticipant(String id) {
+        this.id = id;
+    }
+
+    public SimpleParticipant() {
+    }
+
     @Override
     public String getName() {
         return name;

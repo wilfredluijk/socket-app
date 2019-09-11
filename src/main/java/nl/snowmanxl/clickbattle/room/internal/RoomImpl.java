@@ -40,10 +40,11 @@ public class RoomImpl implements Room, MessageListenerCapable {
     @Override
     public void configureRoom(int id, RoomConfig config) {
         this.id = id;
-        enableMessageListeners();
         data = new RoomData(id, config);
         activity = this.activityFactory.createNewActivity(config.getActivityType());
-        activity.registerMessageListener(this::dispatchMessage);
+        activity.registerMessageDispatcher(this::dispatchMessage);
+        manager.createRoomBasedListeners(id, activity);
+        enableMessageListeners();
         broadcastUpdate();
     }
 
@@ -68,8 +69,8 @@ public class RoomImpl implements Room, MessageListenerCapable {
     }
 
     @Override
-    public void removeParticipant(RemoveParticipantMessage message) {
-        removeParticipant(message.getId());
+    public void removeParticipant(Participant participant) {
+        removeParticipant(participant.getId());
         broadcastUpdate();
     }
 
