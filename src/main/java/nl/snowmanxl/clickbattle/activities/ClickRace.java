@@ -62,7 +62,7 @@ public class ClickRace implements SocketGame {
     }
 
     @Override
-    public void registerMessageListener(Consumer<SocketMessage> messageConsumer) {
+    public void registerMessageDispatcher(Consumer<SocketMessage> messageConsumer) {
         this.messageConsumer = messageConsumer;
     }
 

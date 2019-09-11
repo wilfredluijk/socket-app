@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public interface Activity {
 
-    void registerMessageListener(Consumer<SocketMessage> messageConsumer);
+    void registerMessageDispatcher(Consumer<SocketMessage> messageConsumer);
 
     void consumeParticipantUpdate(Participant participant);
 

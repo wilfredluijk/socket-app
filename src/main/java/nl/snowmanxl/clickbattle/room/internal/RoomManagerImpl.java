@@ -66,4 +66,9 @@ public class RoomManagerImpl implements RoomManager {
         getRoom(id).ifPresent( room -> room.updateParticipant(participant));
     }
 
+    @Override
+    public void removeParticipant(int id, Participant participant) {
+        getRoom(id).ifPresent( room -> room.removeParticipant(participant));
+    }
+
 }

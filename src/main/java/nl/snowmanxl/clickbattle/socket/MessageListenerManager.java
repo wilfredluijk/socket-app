@@ -72,8 +72,9 @@ public class MessageListenerManager {
         }
     }
 
-    @MessageMapping("/{id}/messageToRoom")
-    public void messageToRoom(@DestinationVariable int id, SocketMessage message) {
+    @SuppressWarnings("SameParameterValue")
+    @MessageMapping("/messageToRoom/{id}")
+    void messageToRoom(@DestinationVariable int id, SocketMessage message) {
         Optional.ofNullable(roomMessageListeners.get(id))
                 .flatMap(consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())))
                 .ifPresent(consumers -> consumers.forEach(

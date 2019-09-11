@@ -1,6 +1,7 @@
 package nl.snowmanxl.clickbattle.socket;
 
 import nl.snowmanxl.clickbattle.messages.socket.bl.RemoveParticipantMessage;
+import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.RoomManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -16,26 +17,26 @@ import java.util.Optional;
 @Component
 public class SocketSubscriptionManager {
 
-    private final MessageListenerManager manager;
+    private final MessageListenerManager messageListenerManager;
     private final RoomManager roomManager;
     private final Map<String, RoomPlayerMapping> playerSessionMap = new HashMap<>();
     private final Map<String, String> organizersMap = new HashMap<>();
 
     @Autowired
-    public SocketSubscriptionManager(MessageListenerManager manager, RoomManager roomManager) {
-        this.manager = manager;
+    public SocketSubscriptionManager(MessageListenerManager messageListenerManager, RoomManager roomManager) {
+        this.messageListenerManager = messageListenerManager;
         this.roomManager = roomManager;
     }
 
     @EventListener
     public void onSessionSubscribedEvent(SessionSubscribeEvent event) {
         var sha = StompHeaderAccessor.wrap(event.getMessage());
-        var player_id = sha.getFirstNativeHeader("player_id");
+        var playerId = sha.getFirstNativeHeader("player_id");
         var roomId = sha.getFirstNativeHeader("room_id");
 
         String sessionId = sha.getSessionId();
-        if (player_id != null && roomId != null) {
-            playerSessionMap.put(sessionId, new RoomPlayerMapping(roomId, player_id));
+        if (playerId != null && roomId != null) {
+            playerSessionMap.put(sessionId, new RoomPlayerMapping(roomId, playerId));
         } else if (roomId != null) {
             organizersMap.put(sessionId, roomId);
         }
@@ -48,7 +49,7 @@ public class SocketSubscriptionManager {
 
         Optional.ofNullable(playerSessionMap.get(sessionId))
                 .ifPresent(mapping -> {
-                    manager.messageToRoom(Integer.parseInt(mapping.roomId), new RemoveParticipantMessage(mapping.playerId));
+                    roomManager.removeParticipant(Integer.parseInt(mapping.roomId), new SimpleParticipant(mapping.playerId));
                     playerSessionMap.remove(sessionId);
                 });
         Optional.ofNullable(organizersMap.get(sessionId))
@@ -58,21 +59,13 @@ public class SocketSubscriptionManager {
                 });
     }
 
-    private class RoomPlayerMapping {
+    private static class RoomPlayerMapping {
         private final String roomId;
         private final String playerId;
 
         public RoomPlayerMapping(String roomId, String playerId) {
             this.roomId = roomId;
             this.playerId = playerId;
-        }
-
-        public String getRoomId() {
-            return roomId;
-        }
-
-        public String getPlayerId() {
-            return playerId;
         }
     }
 }
