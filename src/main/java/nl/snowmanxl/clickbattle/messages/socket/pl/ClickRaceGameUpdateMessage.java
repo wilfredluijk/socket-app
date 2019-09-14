@@ -5,7 +5,7 @@ import nl.snowmanxl.clickbattle.model.ClickRaceData;
 
 public class ClickRaceGameUpdateMessage implements SocketMessage {
 
-    ClickRaceData data;
+    private ClickRaceData data;
 
     public ClickRaceGameUpdateMessage(ClickRaceData data) {
         this.data = data;

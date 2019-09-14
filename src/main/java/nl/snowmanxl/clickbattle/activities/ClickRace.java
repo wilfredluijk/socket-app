@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ClickRace implements SocketGame {
@@ -26,12 +27,16 @@ public class ClickRace implements SocketGame {
     // TeamScore
     // Find Team For Person
     //
-    Map<Participant, Player> participantPlayerMap = new HashMap<>();
+    private final Map<Participant, Player> participantPlayerMap = new HashMap<>();
 
     private GameState gameState = GameState.WAITING;
     private ClickRaceScore score = new ClickRaceScore();
     private Consumer<SocketMessage> messageConsumer;
     private Consumer<Participant> participantConsumer;
+
+    //todo: create config variables
+    private int maxPlayerCount = 50;
+    private int maxScore = 5000;
 
     @Override
     public void start(StartSocketGameMessage message) {
@@ -54,7 +59,25 @@ public class ClickRace implements SocketGame {
 
     @OnSocketMessage(ScoreForClickRaceMessage.class)
     public void scoreForClickRace(ScoreForClickRaceMessage message) {
+        String playerId = message.getPlayerId();
+        participantPlayerMap.values().stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst().ifPresent(this::scoreForPlayer);
         broadcastUpdate();
+    }
+
+    private void scoreForPlayer(Player player) {
+        score.scoreFor(player.getTeam(), getWeightedScore(player.getTeam()));
+        if(score.limitIsReached(maxScore)) {
+            gameState = GameState.FINISHED;
+        }
+    }
+
+    private int getWeightedScore(int team) {
+        var teamCount = participantPlayerMap.values()
+                .stream()
+                .collect(Collectors.groupingBy(Player::getTeam, Collectors.counting())).get(team);
+        return Math.toIntExact(maxPlayerCount / teamCount);
     }
 
     private void broadcastUpdate() {
@@ -103,6 +126,11 @@ public class ClickRace implements SocketGame {
 
     public void consumeParticipantRemoval(String id) {
         participantPlayerMap.entrySet().removeIf(entry -> entry.getKey().getId().equals(id));
+    }
+
+    @Override
+    public ActivityData getActivityData() {
+        return new ClickRaceActivityData(participantPlayerMap, gameState, score);
     }
 
     @Override

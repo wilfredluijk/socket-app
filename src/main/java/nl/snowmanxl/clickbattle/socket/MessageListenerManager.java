@@ -19,6 +19,7 @@ import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,10 @@ public class MessageListenerManager {
 
     public void removeRoomListeners(int roomId) {
         roomMessageListeners.remove(roomId);
+    }
+
+    public <T> void createRoomBasedListeners(int roomId, T... inst) {
+        Arrays.stream(inst).forEach(instance -> createRoomBasedListeners(roomId, instance));
     }
 
     public <T> void createRoomBasedListeners(int roomId, T inst) {

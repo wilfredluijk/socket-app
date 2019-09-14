@@ -4,7 +4,6 @@ import nl.snowmanxl.clickbattle.activities.Activity;
 import nl.snowmanxl.clickbattle.activities.ActivityFactory;
 import nl.snowmanxl.clickbattle.socket.MessageDispatcher;
 import nl.snowmanxl.clickbattle.socket.MessageListenerManager;
-import nl.snowmanxl.clickbattle.messages.socket.bl.RemoveParticipantMessage;
 import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.room.MessageListenerCapable;
@@ -27,8 +26,7 @@ public class RoomImpl implements Room, MessageListenerCapable {
     private final MessageDispatcher messageDispatcher;
 
     private int id;
-    //TODO: Check if subclass is really required
-    private RoomData data;
+    private RoomData roomData;
     private Activity activity;
 
     public RoomImpl(MessageListenerManager manager, ActivityFactory activityFactory, MessageDispatcher messageDispatcher) {
@@ -40,17 +38,17 @@ public class RoomImpl implements Room, MessageListenerCapable {
     @Override
     public void configureRoom(int id, RoomConfig config) {
         this.id = id;
-        data = new RoomData(id, config);
+        roomData = new RoomData(id, config);
         activity = this.activityFactory.createNewActivity(config.getActivityType());
         activity.registerMessageDispatcher(this::dispatchMessage);
-        manager.createRoomBasedListeners(id, activity);
+
         enableMessageListeners();
         broadcastUpdate();
     }
 
     @Override
     public String addParticipant(Participant participant) {
-        String id = data.addParticipant(participant);
+        String id = roomData.addParticipant(participant);
         activity.consumeParticipantCreation(participant);
         broadcastUpdate();
         return id;
@@ -58,14 +56,14 @@ public class RoomImpl implements Room, MessageListenerCapable {
 
     @Override
     public void updateParticipant(Participant participant) {
-       data.updateParticipant(participant);
+       roomData.updateParticipant(participant);
        activity.consumeParticipantUpdate(participant);
        broadcastUpdate();
     }
 
     @Override
     public void enableMessageListeners() {
-        manager.createRoomBasedListeners(id, this);
+        manager.createRoomBasedListeners(id, this, activity);
     }
 
     @Override
@@ -80,7 +78,7 @@ public class RoomImpl implements Room, MessageListenerCapable {
     }
 
     private void removeParticipant(String id) {
-        data.removeParticipant(id);
+        roomData.removeParticipant(id);
         activity.consumeParticipantRemoval(id);
         broadcastUpdate();
     }
@@ -90,8 +88,9 @@ public class RoomImpl implements Room, MessageListenerCapable {
     }
 
     private void broadcastUpdate() {
-            LOGGER.trace("Dispatch room update: {}", this);
-            dispatchMessage(new RoomUpdateMessage(data));
+        var message = new RoomUpdateMessage(roomData, activity.getActivityData());
+        LOGGER.trace("Dispatch room update: {}", this);
+        dispatchMessage(message);
     }
 
     @Override
