@@ -47,16 +47,10 @@ public class MessageListenerManager {
         roomMessageListeners.remove(roomId);
     }
 
-//    @MessageMapping("/create/{uuid}")
-//    @SendTo("/topic/board/{uuid}")
-//    public String createGame(@DestinationVariable String uuid) {
-//        LOGGER.debug("Triggered Listener: {}", uuid);
-//        return "test";
-//    }
 
     @MessageMapping("/messageToRoom/{roomId}")
     public void messageToRoom(@DestinationVariable Integer roomId,
-                              @Payload Message<ScoreForClickRaceMessage> rawMessage) {
+                              @Payload Message<SocketMessage> rawMessage) {
         LOGGER.debug("Received raw message: {}", rawMessage);
         var message = rawMessage.getPayload();
         LOGGER.debug("Received message: {}", message);

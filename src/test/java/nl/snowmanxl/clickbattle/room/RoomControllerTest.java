@@ -57,7 +57,7 @@ class RoomControllerTest {
     void createAndDeleteRoom() throws Exception {
         var response = createNewRoomByHttpCall();
         var id = response.split("\"")[3];
-        mvc.perform(get("/room/{id}/delete", Integer.parseInt(id))
+        mvc.perform(get("/room/delete/{id}", Integer.parseInt(id))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200));
     }

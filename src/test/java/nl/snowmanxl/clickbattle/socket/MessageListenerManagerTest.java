@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,13 +30,13 @@ public class MessageListenerManagerTest {
     public void createdListenersAreRemovable() {
         TestRoom testRoom = messageToRoom();
         manager.removeRoomListeners(0);
-//        manager.messageToRoom(0, new TestMessage(2000));
+        manager.messageToRoom(0, new GenericMessage<>(new TestMessage(2000)));
         Assert.assertEquals("Message is not processed properly, expected value to be set in room", 1337, testRoom.getValue());
     }
 
     private TestRoom messageToRoom() {
         var testRoom = new TestRoom(manager);
-//        manager.messageToRoom(0, new TestMessage(1337));
+        manager.messageToRoom(0, new GenericMessage<>(new TestMessage(1337)));
         return testRoom;
     }
 

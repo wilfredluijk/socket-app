@@ -4,6 +4,9 @@ public class ClickRaceData {
     private GameState gameState = GameState.WAITING;
     private ClickRaceScore score = new ClickRaceScore();
 
+    public ClickRaceData() {
+    }
+
     public ClickRaceData(GameState gameState, ClickRaceScore score) {
         this.gameState = gameState;
         this.score = score;
