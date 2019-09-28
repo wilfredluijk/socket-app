@@ -2,12 +2,13 @@ package nl.snowmanxl.clickbattle.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ClickRaceScore {
     private Map<Integer, Integer> score = new HashMap<>();
 
     public void scoreFor(int team, int points) {
-        var score = this.score.get(team);
+        int score = Optional.ofNullable(this.score.get(team)).orElse(0);
         score += points;
         this.score.put(team, Math.max(score, 0));
     }

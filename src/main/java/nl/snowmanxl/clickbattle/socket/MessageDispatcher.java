@@ -5,9 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-@Service
+@Controller
 public class MessageDispatcher {
 
     private final SimpMessagingTemplate webSocket;
@@ -19,7 +20,8 @@ public class MessageDispatcher {
     }
 
     public void dispatchToRoom(int roomId, SocketMessage message) {
-        LOGGER.debug("Dispatching from room: {}, message: {}", roomId, message);
-        webSocket.convertAndSend("/topic/" + roomId + "/messageToRoom", message);
+        String destination = "/topic/messageToRoom/" + roomId;
+        LOGGER.debug("Dispatching to destination: {}, message: {}", destination, message);
+        webSocket.convertAndSend(destination, message);
     }
 }

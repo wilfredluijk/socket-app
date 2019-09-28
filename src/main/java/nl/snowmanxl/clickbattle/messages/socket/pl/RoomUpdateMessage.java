@@ -9,6 +9,10 @@ public class RoomUpdateMessage implements SocketMessage {
     private RoomData room;
     private ActivityData activityData;
 
+
+    public RoomUpdateMessage() {
+    }
+
     public RoomUpdateMessage(RoomData room, ActivityData data) {
         this.room = room;
         this.activityData = data;
@@ -30,4 +34,12 @@ public class RoomUpdateMessage implements SocketMessage {
         this.room = room;
     }
 
+
+    @Override
+    public String toString() {
+        return "RoomUpdateMessage{" +
+                "room=" + room +
+                ", activityData=" + activityData +
+                '}';
+    }
 }

@@ -45,4 +45,12 @@ public class RoomConfig {
     public int hashCode() {
         return Objects.hash(maxPlayerCount, activityType);
     }
+
+    @Override
+    public String toString() {
+        return "RoomConfig{" +
+                "maxPlayerCount=" + maxPlayerCount +
+                ", activityType=" + activityType +
+                '}';
+    }
 }

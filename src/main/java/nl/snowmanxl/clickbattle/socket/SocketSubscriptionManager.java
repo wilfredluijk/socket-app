@@ -3,10 +3,13 @@ package nl.snowmanxl.clickbattle.socket;
 import nl.snowmanxl.clickbattle.messages.socket.bl.RemoveParticipantMessage;
 import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.RoomManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 
 @Component
 public class SocketSubscriptionManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SocketSubscriptionManager.class);
     private final MessageListenerManager messageListenerManager;
     private final RoomManager roomManager;
     private final Map<String, RoomPlayerMapping> playerSessionMap = new HashMap<>();
@@ -29,7 +32,14 @@ public class SocketSubscriptionManager {
     }
 
     @EventListener
+    public void onSessionConnectedEvent(SessionConnectedEvent event) {
+        StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
+        LOGGER.info("Session connect: number of active connections: "+ event);
+    }
+
+    @EventListener
     public void onSessionSubscribedEvent(SessionSubscribeEvent event) {
+        LOGGER.debug("Subscribed: {}", event);
         var sha = StompHeaderAccessor.wrap(event.getMessage());
         var playerId = sha.getFirstNativeHeader("player_id");
         var roomId = sha.getFirstNativeHeader("room_id");

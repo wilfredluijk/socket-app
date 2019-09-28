@@ -29,13 +29,13 @@ public class MessageListenerManagerTest {
     public void createdListenersAreRemovable() {
         TestRoom testRoom = messageToRoom();
         manager.removeRoomListeners(0);
-        manager.messageToRoom(0, new TestMessage(2000));
+//        manager.messageToRoom(0, new TestMessage(2000));
         Assert.assertEquals("Message is not processed properly, expected value to be set in room", 1337, testRoom.getValue());
     }
 
     private TestRoom messageToRoom() {
         var testRoom = new TestRoom(manager);
-        manager.messageToRoom(0, new TestMessage(1337));
+//        manager.messageToRoom(0, new TestMessage(1337));
         return testRoom;
     }
 
