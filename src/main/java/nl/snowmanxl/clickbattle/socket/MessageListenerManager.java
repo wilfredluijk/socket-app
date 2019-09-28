@@ -1,16 +1,24 @@
 package nl.snowmanxl.clickbattle.socket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
+import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
+import nl.snowmanxl.clickbattle.model.ClickRaceScore;
 import nl.snowmanxl.clickbattle.model.Player;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -25,12 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@Service
+@Controller
 public class MessageListenerManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerManager.class);
     private final Map<Integer, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>>> roomMessageListeners
             = new HashMap<>();
 
@@ -38,7 +47,28 @@ public class MessageListenerManager {
         roomMessageListeners.remove(roomId);
     }
 
-    public <T> void createRoomBasedListeners(int roomId, T... inst) {
+//    @MessageMapping("/create/{uuid}")
+//    @SendTo("/topic/board/{uuid}")
+//    public String createGame(@DestinationVariable String uuid) {
+//        LOGGER.debug("Triggered Listener: {}", uuid);
+//        return "test";
+//    }
+
+    @MessageMapping("/messageToRoom/{roomId}")
+    public void messageToRoom(@DestinationVariable Integer roomId,
+                              @Payload Message<ScoreForClickRaceMessage> rawMessage) {
+        LOGGER.debug("Received raw message: {}", rawMessage);
+        var message = rawMessage.getPayload();
+        LOGGER.debug("Received message: {}", message);
+
+        Optional.ofNullable(roomMessageListeners.get(roomId))
+                .flatMap(consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())))
+                .ifPresent(consumers -> consumers.forEach(
+                        consumer -> consumer.accept(message)));
+    }
+
+    @SafeVarargs
+    public final <T> void createRoomBasedListeners(int roomId, T... inst) {
         Arrays.stream(inst).forEach(instance -> createRoomBasedListeners(roomId, instance));
     }
 
@@ -75,15 +105,6 @@ public class MessageListenerManager {
         } catch (Throwable throwable) {
             throw new IllegalStateException("Cannot continue due to encountered exception: ", throwable);
         }
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    @MessageMapping("/messageToRoom/{id}")
-    void messageToRoom(@DestinationVariable int id, SocketMessage message) {
-        Optional.ofNullable(roomMessageListeners.get(id))
-                .flatMap(consumersMap -> Optional.ofNullable(consumersMap.get(message.getClass())))
-                .ifPresent(consumers -> consumers.forEach(
-                        consumer -> consumer.accept(message)));
     }
 
 }

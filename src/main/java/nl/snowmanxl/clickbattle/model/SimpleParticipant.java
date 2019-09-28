@@ -6,6 +6,11 @@ public class SimpleParticipant implements Participant {
     private String name;
     private String id;
 
+    public SimpleParticipant(String name, String id) {
+        this.name = name;
+        this.id = id;
+    }
+
     public SimpleParticipant(String id) {
         this.id = id;
     }

@@ -1,8 +1,10 @@
 package nl.snowmanxl.clickbattle.messages.rest;
 
+import nl.snowmanxl.clickbattle.room.internal.RoomResponseType;
+
 public class RestResponse {
     String message;
-    MessageType type;
+    RoomResponseType type;
 
     public RestResponse(){}
 
@@ -14,17 +16,25 @@ public class RestResponse {
         this.message = message;
     }
 
-    public MessageType getType() {
+    public RoomResponseType getType() {
         return type;
     }
 
-    public void setType(MessageType type) {
+    public void setType(RoomResponseType type) {
         this.type = type;
     }
 
-    public RestResponse(String message, MessageType type) {
+    public RestResponse(String message, RoomResponseType type) {
         this.message = message;
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "RestResponse{" +
+                "message='" + message + '\'' +
+                ", type=" + type +
+                '}';
     }
 }
 

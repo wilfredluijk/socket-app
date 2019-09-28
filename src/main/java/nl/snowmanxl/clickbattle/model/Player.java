@@ -4,6 +4,9 @@ public class Player {
     String id;
     int team;
 
+    public Player() {
+    }
+
     public Player(String id, int team) {
         this.id = id;
         this.team = team;
@@ -23,5 +26,13 @@ public class Player {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id='" + id + '\'' +
+                ", team=" + team +
+                '}';
     }
 }

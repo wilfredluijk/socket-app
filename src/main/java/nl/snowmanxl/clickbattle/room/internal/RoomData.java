@@ -65,4 +65,13 @@ public class RoomData {
         this.participants.addAll(participants);
     }
 
+
+    @Override
+    public String toString() {
+        return "RoomData{" +
+                "roomId=" + roomId +
+                ", config=" + config +
+                ", participants=" + participants +
+                '}';
+    }
 }

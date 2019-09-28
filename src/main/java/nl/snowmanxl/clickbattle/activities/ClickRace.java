@@ -32,7 +32,6 @@ public class ClickRace implements SocketGame {
     private GameState gameState = GameState.WAITING;
     private ClickRaceScore score = new ClickRaceScore();
     private Consumer<SocketMessage> messageConsumer;
-    private Consumer<Participant> participantConsumer;
 
     //todo: create config variables
     private int maxPlayerCount = 50;
@@ -117,7 +116,7 @@ public class ClickRace implements SocketGame {
                 .limit(1)
                 .map(Map.Entry::getKey)
                 .findFirst()
-                .orElseThrow();
+                .orElse(1);
     }
 
     public void consumeParticipantCreation(Participant participant) {

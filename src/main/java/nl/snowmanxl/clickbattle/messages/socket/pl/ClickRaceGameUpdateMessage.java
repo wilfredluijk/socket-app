@@ -7,6 +7,9 @@ public class ClickRaceGameUpdateMessage implements SocketMessage {
 
     private ClickRaceData data;
 
+    public ClickRaceGameUpdateMessage() {
+    }
+
     public ClickRaceGameUpdateMessage(ClickRaceData data) {
         this.data = data;
     }
@@ -17,5 +20,12 @@ public class ClickRaceGameUpdateMessage implements SocketMessage {
 
     public void setData(ClickRaceData data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "ClickRaceGameUpdateMessage{" +
+                "data=" + data +
+                '}';
     }
 }
