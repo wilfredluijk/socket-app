@@ -33,7 +33,6 @@ public class ClickRace implements SocketGame {
     private ClickRaceScore score = new ClickRaceScore();
     private Consumer<SocketMessage> messageConsumer;
 
-    //todo: create config variables
     private int maxPlayerCount = 50;
     private int maxScore = 5000;
 

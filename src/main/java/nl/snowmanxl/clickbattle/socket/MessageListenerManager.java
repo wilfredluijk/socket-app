@@ -1,27 +1,16 @@
 package nl.snowmanxl.clickbattle.socket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
-import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
-import nl.snowmanxl.clickbattle.model.ClickRaceScore;
-import nl.snowmanxl.clickbattle.model.Player;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
@@ -29,11 +18,9 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

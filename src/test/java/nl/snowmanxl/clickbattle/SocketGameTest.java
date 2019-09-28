@@ -36,7 +36,6 @@ public class SocketGameTest {
     private static final String PULL_THE_ROPE = "/pulltherope";
     private static final String SCORE_ENDPOINT = "/app/messageToRoom/";
     private static final String SCORE_LISTENING_ENDPOINT = "/topic/messageToRoom/";
-
     private static final String NEW_ROOM_URL = "/room/new";
     private static final String UPDATE_PLAYER_URL = "/room/update-player/";
     private static final String JOIN_ROOM_URL = "/room/join/";
@@ -44,30 +43,36 @@ public class SocketGameTest {
     @Value("${local.server.port}")
     private int port;
     private String URL;
-
+    private StompSession stompClientSession;
     private List<SocketMessage> receivedSocketMessages = new CopyOnWriteArrayList<>();
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
     @Before
-    public void setup() {
+    public void setup() throws InterruptedException, ExecutionException, TimeoutException {
         URL = WS_LOCALHOST + port + PULL_THE_ROPE;
+        stompClientSession = TestUtil.getStompSession(URL, TestUtil.getStompClient());
     }
 
     @Test
-    public void testStartOfRoom() throws InterruptedException, ExecutionException, TimeoutException {
-        var stompSession = TestUtil.getStompSession(URL, TestUtil.getStompClient());
+    public void testStartOfRoom() throws InterruptedException {
         var roomId = getRoomIdByRestCall();
-        stompSession.subscribe(getRoomSubscriptionHeaders(roomId), new GameStompFrameHandler());
+        subscribeToRoom(roomId);
 
         var playerId = joinRoomAndGetPlayerId(roomId);
-        assertPlayerNameUpdated(roomId, playerId);
+        assertPlayerNameUpdated(roomId, playerId, "Henk");
 
-        StompSession.Receiptable send = stompSession.send(SCORE_ENDPOINT + roomId,
-                new ScoreForClickRaceMessage(playerId));
-
+        sendMessageToRoom(new ScoreForClickRaceMessage(playerId), roomId);
         waitForReceivedMessagesCount(3);
+    }
+
+    private void subscribeToRoom(String roomId) {
+        stompClientSession.subscribe(getRoomSubscriptionHeaders(roomId), new GameStompFrameHandler());
+    }
+
+    private void sendMessageToRoom(SocketMessage message, String roomId) {
+        stompClientSession.send(SCORE_ENDPOINT + roomId, message);
     }
 
     private void waitForReceivedMessagesCount(int expectedCount) throws InterruptedException {
@@ -82,9 +87,9 @@ public class SocketGameTest {
         Assert.assertEquals("Expected 4 messages", expectedCount, receivedSocketMessages.size());
     }
 
-    private void assertPlayerNameUpdated(String roomId, String playerId) {
+    private void assertPlayerNameUpdated(String roomId, String playerId, String playerName) {
         var updateParticipantResponse = testRestTemplate.postForObject(UPDATE_PLAYER_URL + roomId,
-                new SimpleParticipant("Henk", playerId), RestResponse.class);
+                new SimpleParticipant(playerName, playerId), RestResponse.class);
         Assert.assertEquals("Participant updated", updateParticipantResponse.getMessage());
     }
 
