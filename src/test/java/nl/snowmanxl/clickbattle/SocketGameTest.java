@@ -2,8 +2,8 @@ package nl.snowmanxl.clickbattle;
 
 import nl.snowmanxl.clickbattle.activities.ActivityType;
 import nl.snowmanxl.clickbattle.messages.rest.RestResponse;
+import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
-import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
 import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 import org.junit.Assert;
@@ -20,13 +20,11 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,13 +36,16 @@ public class SocketGameTest {
     private static final String PULL_THE_ROPE = "/pulltherope";
     private static final String SCORE_ENDPOINT = "/app/messageToRoom/";
     private static final String SCORE_LISTENING_ENDPOINT = "/topic/messageToRoom/";
-    private static final String SEND_CREATE_BOARD_ENDPOINT = "/app/create/";
+
+    private static final String NEW_ROOM_URL = "/room/new";
+    private static final String UPDATE_PLAYER_URL = "/room/update-player/";
+    private static final String JOIN_ROOM_URL = "/room/join/";
 
     @Value("${local.server.port}")
     private int port;
     private String URL;
 
-    private CompletableFuture<RoomUpdateMessage> completableFuture = new CompletableFuture<RoomUpdateMessage>();
+    private List<SocketMessage> receivedSocketMessages = new CopyOnWriteArrayList<>();
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -56,49 +57,66 @@ public class SocketGameTest {
 
     @Test
     public void testStartOfRoom() throws InterruptedException, ExecutionException, TimeoutException {
+        var stompSession = TestUtil.getStompSession(URL, TestUtil.getStompClient());
+        var roomId = getRoomIdByRestCall();
+        stompSession.subscribe(getRoomSubscriptionHeaders(roomId), new GameStompFrameHandler());
 
-        GameStompFrameHandler handler = new GameStompFrameHandler();
-        WebSocketStompClient stompClient = TestUtil.getStompClient();
-        StompSession stompSession = TestUtil.getStompSession(URL, stompClient);
+        var playerId = joinRoomAndGetPlayerId(roomId);
+        assertPlayerNameUpdated(roomId, playerId);
 
+        StompSession.Receiptable send = stompSession.send(SCORE_ENDPOINT + roomId,
+                new ScoreForClickRaceMessage(playerId));
 
-        var responseMessage = testRestTemplate.postForObject("/room/new",
-                new RoomConfig(50, ActivityType.CLICK_RACE), RestResponse.class);
-        LOGGER.info("Response: {}", responseMessage);
+        waitForReceivedMessagesCount(3);
+    }
 
-        var roomId = responseMessage.getMessage();
+    private void waitForReceivedMessagesCount(int expectedCount) throws InterruptedException {
+        var retries = 20;
+        for (int i = 0; i < retries; i++) {
+            if (receivedSocketMessages.size() != expectedCount) {
+                Thread.sleep(200);
+            } else {
+                break;
+            }
+        }
+        Assert.assertEquals("Expected 4 messages", expectedCount, receivedSocketMessages.size());
+    }
+
+    private void assertPlayerNameUpdated(String roomId, String playerId) {
+        var updateParticipantResponse = testRestTemplate.postForObject(UPDATE_PLAYER_URL + roomId,
+                new SimpleParticipant("Henk", playerId), RestResponse.class);
+        Assert.assertEquals("Participant updated", updateParticipantResponse.getMessage());
+    }
+
+    private String joinRoomAndGetPlayerId(String roomId) {
+        var roomJoinResponse = testRestTemplate.getForObject(JOIN_ROOM_URL + roomId, RestResponse.class);
+        return roomJoinResponse.getMessage();
+    }
+
+    private StompHeaders getRoomSubscriptionHeaders(String roomId) {
         StompHeaders headers = new StompHeaders();
         headers.add(StompHeaders.DESTINATION, SCORE_LISTENING_ENDPOINT + roomId);
         headers.add("room_id", roomId);
-        stompSession.subscribe(headers, handler);
+        return headers;
+    }
 
-        var roomJoinResponse = testRestTemplate.getForObject("/room/" + roomId + "/join", RestResponse.class);
-        var playerId = roomJoinResponse.getMessage();
-
-        var updateParticipantResponse = testRestTemplate.postForObject("/room/" + roomId + "/update-player",
-                new SimpleParticipant("Henk", playerId), RestResponse.class);
-        Assert.assertEquals("Participant updated", updateParticipantResponse.getMessage());
-
-       testRestTemplate.postForObject("/room/" + roomId + "/update-player",
-                new SimpleParticipant("Henk", playerId), RestResponse.class);
-        StompSession.Receiptable send = stompSession.send(SCORE_ENDPOINT + roomId,
-                new ScoreForClickRaceMessage(playerId));
-        LOGGER.debug("Receipt: {}", send.getReceiptId());
-        String uuid = UUID.randomUUID().toString();
-        stompSession.send(SEND_CREATE_BOARD_ENDPOINT + uuid, null);
-        completableFuture.get(4, TimeUnit.SECONDS);
+    private String getRoomIdByRestCall() {
+        var responseMessage = testRestTemplate.postForObject(NEW_ROOM_URL,
+                new RoomConfig(50, ActivityType.CLICK_RACE), RestResponse.class);
+        LOGGER.info("Room creation response: {}", responseMessage);
+        return responseMessage.getMessage();
     }
 
     private class GameStompFrameHandler implements StompFrameHandler {
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
-            return RoomUpdateMessage.class;
+            return SocketMessage.class;
         }
 
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object o) {
             LOGGER.info("HandleFrame: {}, object: {}", stompHeaders, o);
-            completableFuture.complete((RoomUpdateMessage) o);
+            receivedSocketMessages.add((SocketMessage) o);
         }
     }
 }

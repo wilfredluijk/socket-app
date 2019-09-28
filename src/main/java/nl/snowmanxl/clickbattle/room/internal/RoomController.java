@@ -22,19 +22,19 @@ public class RoomController {
         return new RestResponse(String.valueOf(roomManager.createRoom(config)), RoomResponseType.GET_ROOM_ID);
     }
 
-    @GetMapping(path = "/{id}/join")
+    @GetMapping(path = "/join/{id}")
     public RestResponse joinRoom(@PathVariable("id") int id) {
         var playerId = roomManager.joinRoom(id);
         return new RestResponse(playerId, RoomResponseType.GET_PLAYER_ID);
     }
 
-    @PostMapping(path = "/{id}/update-player")
+    @PostMapping(path = "/update-player/{id}")
     public RestResponse updateParticipant(@PathVariable("id") int id, @RequestBody Participant participant) {
         roomManager.updateParticipant(id, participant);
         return new RestResponse("Participant updated", RoomResponseType.CONFIRMATION);
     }
 
-    @RequestMapping(path = "/{id}/delete")
+    @RequestMapping(path = "/delete/{id}")
     public RestResponse deleteGame(@PathVariable("id") int id) {
         roomManager.deleteRoom(id);
         return new RestResponse("Game deleted", RoomResponseType.CONFIRMATION);
