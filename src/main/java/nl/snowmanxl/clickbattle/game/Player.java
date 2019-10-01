@@ -1,4 +1,4 @@
-package nl.snowmanxl.clickbattle.model;
+package nl.snowmanxl.clickbattle.game;
 
 public class Player {
     String id;

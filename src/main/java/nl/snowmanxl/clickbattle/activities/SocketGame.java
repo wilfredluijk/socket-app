@@ -1,10 +1,11 @@
 package nl.snowmanxl.clickbattle.activities;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import nl.snowmanxl.clickbattle.game.ClickRace;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ResetSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.StartSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.StopSocketGameMessage;
+import nl.snowmanxl.clickbattle.game.ResetSocketGameMessage;
+import nl.snowmanxl.clickbattle.game.StartSocketGameMessage;
+import nl.snowmanxl.clickbattle.game.StopSocketGameMessage;
 import nl.snowmanxl.clickbattle.model.GameType;
 
 @JsonDeserialize(as = ClickRace.class)

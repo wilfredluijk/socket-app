@@ -1,9 +1,10 @@
 package nl.snowmanxl.clickbattle;
 
-import nl.snowmanxl.clickbattle.activities.ActivityType;
+import nl.snowmanxl.clickbattle.game.ActivityType;
 import nl.snowmanxl.clickbattle.messages.rest.RestResponse;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.game.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.game.ClickRaceGameUpdateMessage;
 import nl.snowmanxl.clickbattle.model.SimpleParticipant;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 import org.junit.Assert;
@@ -53,10 +54,11 @@ public class SocketGameTest {
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
         URL = WS_LOCALHOST + port + PULL_THE_ROPE;
         stompClientSession = TestUtil.getStompSession(URL, TestUtil.getStompClient());
+        receivedSocketMessages.clear();
     }
 
     @Test
-    public void testStartOfRoom() throws InterruptedException {
+    public void testGameMessageIsReceived() throws InterruptedException {
         var roomId = getRoomIdByRestCall();
         subscribeToRoom(roomId);
 
@@ -67,6 +69,33 @@ public class SocketGameTest {
         waitForReceivedMessagesCount(3);
     }
 
+    @Test
+    public void testScoreUpdateMessageIsReceived() throws InterruptedException {
+        var roomId = getRoomIdByRestCall();
+        subscribeToRoom(roomId);
+
+        var playerIdOne = joinRoomAndGetPlayerId(roomId);
+        assertPlayerNameUpdated(roomId, playerIdOne, "Henk");
+
+        var playerIdTwo = joinRoomAndGetPlayerId(roomId);
+        assertPlayerNameUpdated(roomId, playerIdTwo, "Henk");
+
+        sendMessageToRoom(new ScoreForClickRaceMessage(playerIdOne), roomId);
+        sendMessageToRoom(new ScoreForClickRaceMessage(playerIdTwo), roomId);
+
+        clearMessages();
+        expectToReceiveMessage(ClickRaceGameUpdateMessage.class);
+    }
+
+    private void clearMessages() {
+        receivedSocketMessages.clear();
+    }
+
+    private void expectToReceiveMessage(Class<?> clickRaceGameUpdateMessageClass)  {
+        pollUntilTrueOrTimeout(() -> receivedSocketMessages.stream()
+                .anyMatch(message -> message.getClass().equals(clickRaceGameUpdateMessageClass)));
+    }
+
     private void subscribeToRoom(String roomId) {
         stompClientSession.subscribe(getRoomSubscriptionHeaders(roomId), new GameStompFrameHandler());
     }
@@ -75,16 +104,35 @@ public class SocketGameTest {
         stompClientSession.send(SCORE_ENDPOINT + roomId, message);
     }
 
-    private void waitForReceivedMessagesCount(int expectedCount) throws InterruptedException {
+    private void waitForReceivedMessagesCount(int expectedCount) {
+        pollUntilTrueOrTimeout(() -> expectedCount == receivedSocketMessages.size());
+        Assert.assertEquals(getErorFromMessages(expectedCount), expectedCount, receivedSocketMessages.size());
+    }
+
+    private void pollUntilTrueOrTimeout(Condition condition)  {
         var retries = 20;
         for (int i = 0; i < retries; i++) {
-            if (receivedSocketMessages.size() != expectedCount) {
-                Thread.sleep(200);
-            } else {
+            if (condition.passes()) {
                 break;
+            } else {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw  new AssertionError("Test thread Interrupted!");
+                }
             }
         }
-        Assert.assertEquals("Expected 4 messages", expectedCount, receivedSocketMessages.size());
+    }
+
+    private String getErorFromMessages(int expectedCount) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Expected ")
+                .append(expectedCount)
+                .append(" found ")
+                .append(receivedSocketMessages.size())
+                .append(" messages, received the following messages: \n\n\n");
+        receivedSocketMessages.forEach(message -> builder.append(message.toString()).append("\n"));
+        return builder.toString();
     }
 
     private void assertPlayerNameUpdated(String roomId, String playerId, String playerName) {

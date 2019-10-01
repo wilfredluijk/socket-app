@@ -1,14 +1,11 @@
 package nl.snowmanxl.clickbattle.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.snowmanxl.clickbattle.activities.ActivityType;
-import nl.snowmanxl.clickbattle.model.GameType;
+import nl.snowmanxl.clickbattle.game.ActivityType;
 import nl.snowmanxl.clickbattle.room.internal.RoomConfig;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +17,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class RoomControllerTest {
 

@@ -1,6 +1,6 @@
 package nl.snowmanxl.clickbattle.room.internal;
 
-import nl.snowmanxl.clickbattle.activities.ActivityType;
+import nl.snowmanxl.clickbattle.game.ActivityType;
 
 import java.util.Objects;
 

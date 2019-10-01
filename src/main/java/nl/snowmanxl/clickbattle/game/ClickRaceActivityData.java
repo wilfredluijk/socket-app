@@ -1,15 +1,16 @@
-package nl.snowmanxl.clickbattle.activities;
+package nl.snowmanxl.clickbattle.game;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import nl.snowmanxl.clickbattle.activities.ActivityData;
+import nl.snowmanxl.clickbattle.activities.ParticipantKeyDeserializer;
 import nl.snowmanxl.clickbattle.model.ClickRaceScore;
 import nl.snowmanxl.clickbattle.model.GameState;
-import nl.snowmanxl.clickbattle.model.Player;
 import nl.snowmanxl.clickbattle.room.Participant;
 
 import java.util.Map;
 
 public class ClickRaceActivityData implements ActivityData {
+
     @JsonDeserialize(keyUsing = ParticipantKeyDeserializer.class)
     private Map<Participant, Player> participantPlayerMap;
     private GameState gameState;
@@ -21,6 +22,18 @@ public class ClickRaceActivityData implements ActivityData {
     public ClickRaceActivityData(Map<Participant, Player> participantPlayerMap, GameState gameState, ClickRaceScore score) {
         this.participantPlayerMap = participantPlayerMap;
         this.gameState = gameState;
+        this.score = score;
+    }
+
+    public void setParticipantPlayerMap(Map<Participant, Player> participantPlayerMap) {
+        this.participantPlayerMap = participantPlayerMap;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public void setScore(ClickRaceScore score) {
         this.score = score;
     }
 

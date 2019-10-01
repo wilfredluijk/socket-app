@@ -1,4 +1,4 @@
-package nl.snowmanxl.clickbattle.messages.socket.bl;
+package nl.snowmanxl.clickbattle.game;
 
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
 
