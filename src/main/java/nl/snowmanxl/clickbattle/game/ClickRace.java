@@ -1,16 +1,12 @@
-package nl.snowmanxl.clickbattle.activities;
+package nl.snowmanxl.clickbattle.game;
 
-import nl.snowmanxl.clickbattle.messages.socket.pl.ClickRaceGameUpdateMessage;
+import nl.snowmanxl.clickbattle.activities.ActivityData;
+import nl.snowmanxl.clickbattle.activities.SocketGame;
 import nl.snowmanxl.clickbattle.messages.socket.OnSocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ResetSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
 import nl.snowmanxl.clickbattle.messages.socket.SocketMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.StartSocketGameMessage;
-import nl.snowmanxl.clickbattle.messages.socket.bl.StopSocketGameMessage;
 import nl.snowmanxl.clickbattle.model.ClickRaceData;
-import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.model.ClickRaceScore;
-import nl.snowmanxl.clickbattle.model.Player;
+import nl.snowmanxl.clickbattle.model.GameState;
 import nl.snowmanxl.clickbattle.room.Participant;
 
 import java.util.Comparator;
@@ -18,15 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ClickRace implements SocketGame {
 
-    // Personal Score
-    // TeamScore
-    // Find Team For Person
-    //
     private final Map<Participant, Player> participantPlayerMap = new HashMap<>();
 
     private GameState gameState = GameState.WAITING;
@@ -35,6 +26,7 @@ public class ClickRace implements SocketGame {
 
     private int maxPlayerCount = 50;
     private int maxScore = 5000;
+    private int maxTeams = 5;
 
     @Override
     public void start(StartSocketGameMessage message) {
@@ -66,7 +58,7 @@ public class ClickRace implements SocketGame {
 
     private void scoreForPlayer(Player player) {
         score.scoreFor(player.getTeam(), getWeightedScore(player.getTeam()));
-        if(score.limitIsReached(maxScore)) {
+        if (score.limitIsReached(maxScore)) {
             gameState = GameState.FINISHED;
         }
     }
@@ -109,13 +101,31 @@ public class ClickRace implements SocketGame {
     }
 
     private int getNewTeam() {
-        return getPlayerCountPerTeam().entrySet()
+        var team = 0;
+        Map<Integer, Long> playerCountPerTeam = getPlayerCountPerTeam();
+        if (playerCountPerTeam.keySet().size() != maxTeams) {
+            team = getNewTeam(playerCountPerTeam);
+        } else {
+            team = getExistingTeam(playerCountPerTeam);
+        }
+        return team;
+    }
+
+    private int getExistingTeam(Map<Integer, Long> playerCountPerTeam) {
+        return playerCountPerTeam.entrySet()
                 .stream()
                 .sorted(Comparator.comparingLong(Map.Entry::getValue))
                 .limit(1)
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(1);
+    }
+
+    private int getNewTeam(Map<Integer, Long> playerCountPerTeam) {
+        return playerCountPerTeam.keySet()
+                .stream()
+                .max(Integer::compareTo)
+                .map(this::getTeamNumber).orElse(1);
     }
 
     public void consumeParticipantCreation(Participant participant) {
@@ -137,5 +147,13 @@ public class ClickRace implements SocketGame {
                 "gameState=" + gameState +
                 ", score=" + score +
                 '}';
+    }
+
+    private Integer getTeamNumber(Integer value) {
+        if (value < maxTeams) {
+            return ++value;
+        } else {
+            return value;
+        }
     }
 }

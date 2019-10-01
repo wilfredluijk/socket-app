@@ -1,7 +1,7 @@
 package nl.snowmanxl.clickbattle.activities;
 
 
-import nl.snowmanxl.clickbattle.activities.Activity;
+import nl.snowmanxl.clickbattle.game.ActivityType;
 
 public interface ActivityFactory {
 

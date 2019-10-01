@@ -1,8 +1,8 @@
 package nl.snowmanxl.clickbattle.activities;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import nl.snowmanxl.clickbattle.model.SimpleParticipant;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-@JsonDeserialize(as = ClickRaceActivityData.class)
+@JsonTypeInfo(use = Id.CLASS)
 public interface ActivityData {
 }

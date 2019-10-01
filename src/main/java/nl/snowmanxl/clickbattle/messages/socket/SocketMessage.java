@@ -2,8 +2,8 @@ package nl.snowmanxl.clickbattle.messages.socket;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import nl.snowmanxl.clickbattle.messages.socket.bl.ScoreForClickRaceMessage;
-import nl.snowmanxl.clickbattle.messages.socket.pl.ClickRaceGameUpdateMessage;
+import nl.snowmanxl.clickbattle.game.ScoreForClickRaceMessage;
+import nl.snowmanxl.clickbattle.game.ClickRaceGameUpdateMessage;
 import nl.snowmanxl.clickbattle.messages.socket.pl.RoomUpdateMessage;
 
 @JsonTypeInfo(

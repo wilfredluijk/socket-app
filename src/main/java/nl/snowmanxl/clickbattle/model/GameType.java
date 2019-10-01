@@ -1,10 +1,11 @@
 package nl.snowmanxl.clickbattle.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import nl.snowmanxl.clickbattle.activities.Activity;
-import nl.snowmanxl.clickbattle.activities.ClickRace;
+import nl.snowmanxl.clickbattle.game.ClickRace;
 
-@JsonDeserialize(as = ClickRace.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface GameType extends Activity {
 
 }

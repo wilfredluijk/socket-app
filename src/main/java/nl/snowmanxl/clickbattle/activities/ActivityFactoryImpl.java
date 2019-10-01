@@ -1,9 +1,8 @@
 package nl.snowmanxl.clickbattle.activities;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.snowmanxl.clickbattle.game.ActivityType;
+import nl.snowmanxl.clickbattle.game.ClickRace;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ActivityFactoryImpl implements ActivityFactory {
