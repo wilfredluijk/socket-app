@@ -1,10 +1,8 @@
-package nl.snowmanxl.socketapp;
+package nl.snowmanxl.socketapp.game;
 
-import nl.snowmanxl.socketapp.game.ActivityType;
+import nl.snowmanxl.socketapp.Condition;
 import nl.snowmanxl.socketapp.messages.rest.RestResponse;
 import nl.snowmanxl.socketapp.messages.socket.SocketMessage;
-import nl.snowmanxl.socketapp.game.ScoreForClickRaceMessage;
-import nl.snowmanxl.socketapp.game.ClickRaceGameUpdateMessage;
 import nl.snowmanxl.socketapp.model.SimpleParticipant;
 import nl.snowmanxl.socketapp.room.internal.RoomConfig;
 import org.junit.Assert;
@@ -61,7 +59,7 @@ public class SocketGameTest {
     }
 
     @Test
-    public void testGameMessageIsReceived() throws InterruptedException {
+    public void testGameMessageIsReceived() {
         var roomId = getRoomIdByRestCall();
         subscribeToRoom(roomId);
 

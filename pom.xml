@@ -6,13 +6,15 @@
     <groupId>nl.snowmanxl</groupId>
     <artifactId>socket-app-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <modules>
-        <module>socket-app-core</module>
-    </modules>
     <packaging>pom</packaging>
 
     <name>socket-app-parent</name>
     <description>Game</description>
+
+    <modules>
+        <module>socket-app-core</module>
+        <module>socket-app-game</module>
+    </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -33,6 +35,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>nl.snowmanxl</groupId>
+                <artifactId>socket-app-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.snowmanxl</groupId>
+                <artifactId>socket-app-game</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -68,15 +80,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-
 </project>

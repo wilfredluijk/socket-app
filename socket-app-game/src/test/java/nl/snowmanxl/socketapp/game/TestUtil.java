@@ -1,4 +1,4 @@
-package nl.snowmanxl.socketapp;
+package nl.snowmanxl.socketapp.game;
 
 import nl.snowmanxl.socketapp.socket.StompSessionHandler;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;

@@ -1,4 +1,4 @@
-package nl.snowmanxl.socketapp.activities;
+package nl.snowmanxl.socketapp.game;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import nl.snowmanxl.socketapp.game.ClickRace;

@@ -1,13 +1,15 @@
 package nl.snowmanxl.socketapp.game;
 
 import nl.snowmanxl.socketapp.activities.ActivityData;
-import nl.snowmanxl.socketapp.activities.SocketGame;
 import nl.snowmanxl.socketapp.messages.socket.OnSocketMessage;
 import nl.snowmanxl.socketapp.messages.socket.SocketMessage;
 import nl.snowmanxl.socketapp.model.GameState;
 import nl.snowmanxl.socketapp.room.Participant;
 import nl.snowmanxl.socketapp.model.ClickRaceData;
 import nl.snowmanxl.socketapp.model.ClickRaceScore;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@Component("click-race")
+@Scope("prototype")
 public class ClickRace implements SocketGame {
 
     private final Map<Participant, Player> participantPlayerMap = new HashMap<>();
