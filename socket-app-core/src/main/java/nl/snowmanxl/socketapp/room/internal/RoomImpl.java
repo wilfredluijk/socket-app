@@ -48,10 +48,10 @@ public class RoomImpl implements Room, MessageListenerCapable {
 
     @Override
     public String addParticipant(Participant participant) {
-        String id = roomData.addParticipant(participant);
+        String participantId = roomData.addParticipant(participant);
         activity.consumeParticipantCreation(participant);
         broadcastUpdate();
-        return id;
+        return participantId;
     }
 
     @Override

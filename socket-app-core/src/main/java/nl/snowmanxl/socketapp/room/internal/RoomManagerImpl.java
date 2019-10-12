@@ -18,7 +18,7 @@ import java.util.Optional;
 @Component
 public class RoomManagerImpl implements RoomManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManagerImpl.class);
 
     private final Map<Integer, Room> rooms = new HashMap<>();
     private final RoomIdService idService;

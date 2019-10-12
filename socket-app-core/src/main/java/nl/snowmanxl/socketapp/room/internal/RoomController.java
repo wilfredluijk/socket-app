@@ -4,6 +4,7 @@ import nl.snowmanxl.socketapp.messages.rest.RestResponse;
 import nl.snowmanxl.socketapp.room.Participant;
 import nl.snowmanxl.socketapp.room.RoomManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,7 @@ public class RoomController {
         return new RestResponse("Participant updated", RoomResponseType.CONFIRMATION);
     }
 
-    @RequestMapping(path = "/delete/{id}")
+    @DeleteMapping(path = "/delete/{id}")
     public RestResponse deleteGame(@PathVariable("id") int id) {
         roomManager.deleteRoom(id);
         return new RestResponse("Game deleted", RoomResponseType.CONFIRMATION);

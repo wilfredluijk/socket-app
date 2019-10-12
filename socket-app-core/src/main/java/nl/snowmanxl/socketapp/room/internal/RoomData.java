@@ -37,7 +37,7 @@ public class RoomData {
     }
 
     public void removeParticipant(String id) {
-        this.participants.removeIf((part) -> Objects.equals(part.getId(), id));
+        this.participants.removeIf( part -> Objects.equals(part.getId(), id));
     }
 
     public int getRoomId() {

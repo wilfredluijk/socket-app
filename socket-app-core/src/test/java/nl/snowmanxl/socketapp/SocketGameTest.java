@@ -26,7 +26,10 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static org.awaitility.Awaitility.await;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -110,18 +113,7 @@ public class SocketGameTest {
     }
 
     private void pollUntilTrueOrTimeout(Condition condition)  {
-        var retries = 20;
-        for (int i = 0; i < retries; i++) {
-            if (condition.passes()) {
-                break;
-            } else {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    throw  new AssertionError("Test thread Interrupted!");
-                }
-            }
-        }
+        await().atMost(2, TimeUnit.SECONDS).until(condition::passes);
     }
 
     private String getErorFromMessages(int expectedCount) {

@@ -5,27 +5,27 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ClickRaceScore {
-    private Map<Integer, Integer> score = new HashMap<>();
+    private Map<Integer, Integer> scores = new HashMap<>();
 
     public void scoreFor(int team, int points) {
-        int score = Optional.ofNullable(this.score.get(team)).orElse(0);
-        score += points;
-        this.score.put(team, Math.max(score, 0));
+        int scoreValue = Optional.ofNullable(this.scores.get(team)).orElse(0);
+        scoreValue += points;
+        this.scores.put(team, Math.max(scoreValue, 0));
     }
 
-    public Map<Integer, Integer> getScore() {
-        return score;
+    public Map<Integer, Integer> getScores() {
+        return scores;
     }
 
     public boolean limitIsReached(int scoreLimit) {
-        return score.values().stream()
-                .anyMatch(score -> score >= scoreLimit);
+        return scores.values().stream()
+                .anyMatch(scoreValue -> scoreValue >= scoreLimit);
     }
 
     @Override
     public String toString() {
         return "Score{" +
-                "score=" + score +
+                "score=" + scores +
                 '}';
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashSet;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,7 +53,7 @@ class RoomControllerTest {
     void createAndDeleteRoom() throws Exception {
         var response = createNewRoomByHttpCall();
         var id = response.split("\"")[3];
-        mvc.perform(get("/room/delete/{id}", Integer.parseInt(id))
+        mvc.perform(delete("/room/delete/{id}", Integer.parseInt(id))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200));
     }
