@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Controller
@@ -53,14 +54,20 @@ public class MessageListenerManager {
         Arrays.stream(inst).forEach(instance -> createRoomBasedListeners(roomId, instance));
     }
 
-    public <T> void createRoomBasedListeners(int roomId, T inst) {
-        var reflections = new Reflections(inst.getClass(), new MethodAnnotationsScanner());
+    public <T> void createRoomBasedListeners(int roomId, T instance) {
+        var reflections = new Reflections(instance.getClass(), new MethodAnnotationsScanner());
+
         Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>> listenersPerType
                 = reflections.getMethodsAnnotatedWith(OnSocketMessage.class).stream()
-                .collect(Collectors.groupingBy(method -> method.getDeclaredAnnotation(OnSocketMessage.class).value(),
-                        Collectors.mapping(method -> mapMethodToConsumer(method, inst), Collectors.toSet())));
+                .filter(method -> method.getDeclaringClass().equals(instance.getClass()))
+                .collect(Collectors.groupingBy(MessageListenerManager::getMessageType,
+                        mapMethodToConsumerLambdaImpl(instance)));
 
-        Optional.ofNullable(listenersPerType).ifPresent(listeners -> addToListeners(roomId, listenersPerType));
+        Optional.ofNullable(listenersPerType).ifPresent(listeners -> addToListeners(roomId, listeners));
+    }
+
+    private <T> Collector<Method, ?, Set<Consumer<SocketMessage>>> mapMethodToConsumerLambdaImpl(T inst) {
+        return Collectors.mapping(method -> mapMethodToConsumer(method, inst), Collectors.toSet());
     }
 
     private void addToListeners(int roomId, Map<Class<? extends SocketMessage>, Set<Consumer<SocketMessage>>> maps) {
@@ -86,6 +93,10 @@ public class MessageListenerManager {
         } catch (Throwable throwable) {
             throw new IllegalStateException("Cannot continue due to encountered exception: ", throwable);
         }
+    }
+
+    private static Class<? extends SocketMessage> getMessageType(Method method) {
+        return method.getDeclaredAnnotation(OnSocketMessage.class).value();
     }
 
 }

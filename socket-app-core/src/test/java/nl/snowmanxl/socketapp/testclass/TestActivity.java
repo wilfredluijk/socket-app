@@ -1,8 +1,9 @@
-package nl.snowmanxl.socketapp.room;
+package nl.snowmanxl.socketapp.testclass;
 
 import nl.snowmanxl.socketapp.activities.Activity;
 import nl.snowmanxl.socketapp.activities.ActivityData;
 import nl.snowmanxl.socketapp.messages.socket.SocketMessage;
+import nl.snowmanxl.socketapp.room.Participant;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -35,5 +36,10 @@ public class TestActivity implements Activity  {
     @Override
     public ActivityData getActivityData() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "TestActivity{}";
     }
 }

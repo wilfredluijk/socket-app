@@ -1,4 +1,4 @@
-package nl.snowmanxl.socketapp.socket.testclass;
+package nl.snowmanxl.socketapp.testclass;
 
 
 import nl.snowmanxl.socketapp.messages.socket.OnSocketMessage;
@@ -19,5 +19,12 @@ public class TestRoom {
 
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "TestRoom{" +
+                "value=" + value +
+                '}';
     }
 }

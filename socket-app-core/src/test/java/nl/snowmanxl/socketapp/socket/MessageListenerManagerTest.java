@@ -1,7 +1,7 @@
 package nl.snowmanxl.socketapp.socket;
 
-import nl.snowmanxl.socketapp.socket.testclass.TestMessage;
-import nl.snowmanxl.socketapp.socket.testclass.TestRoom;
+import nl.snowmanxl.socketapp.testclass.TestMessage;
+import nl.snowmanxl.socketapp.testclass.TestRoom;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

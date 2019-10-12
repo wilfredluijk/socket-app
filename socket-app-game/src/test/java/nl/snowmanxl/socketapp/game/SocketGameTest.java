@@ -35,7 +35,7 @@ public class SocketGameTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SocketGameTest.class);
     private static final String WS_LOCALHOST = "ws://localhost:";
-    private static final String PULL_THE_ROPE = "/pulltherope";
+    private static final String PULL_THE_ROPE = "/socketapp";
     private static final String SCORE_ENDPOINT = "/app/messageToRoom/";
     private static final String SCORE_LISTENING_ENDPOINT = "/topic/messageToRoom/";
     private static final String NEW_ROOM_URL = "/room/new";
@@ -54,7 +54,7 @@ public class SocketGameTest {
     @Before
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
         URL = WS_LOCALHOST + port + PULL_THE_ROPE;
-        stompClientSession = TestUtil.getStompSession(URL, TestUtil.getStompClient());
+        stompClientSession = StompConnectionUtil.getStompSession(URL, StompConnectionUtil.getStompClient());
         receivedSocketMessages.clear();
     }
 

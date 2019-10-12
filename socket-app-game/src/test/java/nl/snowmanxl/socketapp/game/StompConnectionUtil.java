@@ -15,13 +15,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public final class TestUtil {
+final class StompConnectionUtil {
 
-
-    private TestUtil() {
+    private StompConnectionUtil() {
         //no instantiation
     }
-    public static WebSocketStompClient getStompClient() {
+    static WebSocketStompClient getStompClient() {
         WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
         stompClient.setMessageConverter(messageConverter);
@@ -34,7 +33,7 @@ public final class TestUtil {
         }};
     }
 
-    public static StompSession getStompSession(final String URL, WebSocketStompClient stompClient)
+    static StompSession getStompSession(final String URL, WebSocketStompClient stompClient)
             throws InterruptedException, ExecutionException, TimeoutException {
         return stompClient.connect(URL, new StompSessionHandler()).get(1, TimeUnit.SECONDS);
     }

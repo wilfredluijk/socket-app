@@ -1,4 +1,4 @@
-package nl.snowmanxl.socketapp.socket.testclass;
+package nl.snowmanxl.socketapp.testclass;
 
 import nl.snowmanxl.socketapp.messages.socket.SocketMessage;
 
