@@ -145,7 +145,7 @@ public class SocketGameTest {
 
     private String getRoomIdByRestCall() {
         var responseMessage = testRestTemplate.postForObject(NEW_ROOM_URL,
-                new RoomConfig(50, ActivityType.CLICK_RACE), RestResponse.class);
+                new RoomConfig(50, "click-race"), RestResponse.class);
         LOGGER.info("Room creation response: {}", responseMessage);
         return responseMessage.getMessage();
     }

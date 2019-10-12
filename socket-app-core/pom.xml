@@ -64,8 +64,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>repackage</id>
                         <configuration>
-                            <mainClass>nl.snowmanxl.socketapp.SocketAppMain</mainClass>
+                            <classifier>exec</classifier>
                         </configuration>
                     </execution>
                 </executions>

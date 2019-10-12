@@ -16,8 +16,10 @@ public class ActivityFactoryImpl implements ActivityFactory {
 
     @Override
     public Activity createNewActivity(String typeName) {
-        return Optional.ofNullable(context.getBean(typeName))
-                .filter(foundBean -> foundBean.getClass().isAssignableFrom(Activity.class))
+        Object bean = context.getBean(typeName);
+
+        return Optional.ofNullable(bean)
+                .filter(foundBean -> Activity.class.isAssignableFrom(foundBean.getClass()))
                 .map(foundBean -> (Activity) foundBean)
                 .orElseThrow(() -> new IllegalArgumentException("Type " + typeName + " is not supported "));
     }

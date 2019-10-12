@@ -1,7 +1,6 @@
 package nl.snowmanxl.socketapp.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.snowmanxl.socketapp.game.ActivityType;
 import nl.snowmanxl.socketapp.room.internal.RoomConfig;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.HashSet;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RoomControllerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomControllerTest.class);
-    private static final RoomConfig CONFIG = new RoomConfig(100, ActivityType.CLICK_RACE);
+    private static final RoomConfig CONFIG = new RoomConfig(100, "test-activity");
 
     private final MockMvc mvc;
 

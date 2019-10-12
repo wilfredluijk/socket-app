@@ -1,17 +1,14 @@
 package nl.snowmanxl.socketapp.room.internal;
-
-import nl.snowmanxl.socketapp.game.ActivityType;
-
 import java.util.Objects;
 
 public class RoomConfig {
     private int maxPlayerCount;
-    private ActivityType activityType;
+    private String activityType;
 
     public RoomConfig() {
     }
 
-    public RoomConfig(int maxPlayerCount, ActivityType type) {
+    public RoomConfig(int maxPlayerCount, String type) {
         this.maxPlayerCount = maxPlayerCount;
         this.activityType = type;
     }
@@ -24,11 +21,11 @@ public class RoomConfig {
         this.maxPlayerCount = maxPlayerCount;
     }
 
-    public ActivityType getActivityType() {
+    public String getActivityType() {
         return activityType;
     }
 
-    public void setGameType(ActivityType activityType) {
+    public void setGameType(String activityType) {
         this.activityType = activityType;
     }
 
@@ -38,7 +35,7 @@ public class RoomConfig {
         if (o == null || getClass() != o.getClass()) return false;
         RoomConfig that = (RoomConfig) o;
         return maxPlayerCount == that.maxPlayerCount &&
-                activityType == that.activityType;
+                Objects.equals(activityType, that.activityType);
     }
 
     @Override

@@ -1,5 +1,8 @@
-/target/
+*/target/
+/target/*
 !.mvn/wrapper/maven-wrapper.jar
+*.class
+*.lst
 
 ### STS ###
 .apt_generated
@@ -23,3 +26,5 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+/socket-app-core/target/
+/socket-app-game/target/
